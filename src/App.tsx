@@ -1,0 +1,846 @@
+import { useState, useEffect, useRef } from 'react';
+import { Mail, Copy, Check, ArrowUpRight } from 'lucide-react';
+import profileImg from './assets/Profile image.png';
+import drLabCover from './assets/Cover Image/Dr Lab Cover.png';
+import skyvaultCover from './assets/Cover Image/Skyvault Cover.png';
+import whatsappEmailCover from './assets/Cover Image/Whatsapp + Email cover.png';
+import busSnapCover from './assets/Cover Image/Bus Snap Cover.png';
+import './index.css';
+
+/* ─── DATA ─────────────────────────────────────────── */
+
+const PROJECTS = [
+  {
+    id: 'dr-lab',
+    index: '01',
+    title: 'Dr. Lab',
+    tags: ['Healthcare', 'Mobile App'],
+    desc: 'A healthcare experience that brings doctor appointments, lab tests, diagnostics, and medicine access into one simple, connected platform.',
+    year: '2025',
+    role: 'Lead UI/UX Designer',
+    accent: '#FF4D6D',
+    cover: drLabCover,
+  },
+  {
+    id: 'sky-vault',
+    index: '02',
+    title: 'Sky Vault',
+    tags: ['SaaS', 'Cloud Storage'],
+    desc: 'Reimagining everyday file management with a clean, organized cloud experience built around effortless storage and sharing.',
+    year: '2025',
+    role: 'Product Designer',
+    accent: '#4F6EF7',
+    cover: skyvaultCover,
+  },
+  {
+    id: 'whatsapp-email',
+    index: '03',
+    title: 'WhatsApp + Email',
+    tags: ['Concept', 'Productivity'],
+    desc: 'A UX concept that brings email threads directly into WhatsApp\'s familiar chat UI — built for India\'s millions of micro-entrepreneurs.',
+    year: '2024',
+    role: 'UX Researcher & Designer',
+    accent: '#25A244',
+    cover: whatsappEmailCover,
+  },
+  {
+    id: 'bus-snap',
+    index: '04',
+    title: 'Bus Snap',
+    tags: ['Wearable', 'Smart Transit'],
+    desc: 'A smartwatch-based bus ticketing experience designed to make Chennai’s city transit faster, simpler, and completely hands-free.',
+    year: '2024',
+    role: 'Wearable UX Specialist',
+    accent: '#F59E0B',
+    cover: busSnapCover,
+  },
+];
+
+const SKILLS = [
+  'User Research', 'Information Architecture', 'Wireframing',
+  'Prototyping', 'Usability Testing', 'Design Systems',
+  'Figma', 'FigJam', 'Framer', 'Adobe XD', 'Miro',
+  'AI Prompt Engineering', 'WCAG 2.1 Accessibility',
+];
+
+const PROCESS = [
+  { step: '01', title: 'Understand', desc: 'Understand the users, business goals, and product requirements.' },
+  { step: '02', title: 'Define', desc: 'Identify the key problems, user needs, and opportunities.' },
+  { step: '03', title: 'Explore', desc: 'Create information architecture, wireframes, and possible solutions.' },
+  { step: '04', title: 'Design', desc: 'Turn validated ideas into polished UI and interactive prototypes.' },
+  { step: '05', title: 'Improve', desc: 'Test, refine, and improve the experience based on feedback.' },
+];
+
+/* ─── HELPERS ────────────────────────────────────────── */
+
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold: 0.12 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, visible };
+}
+
+function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const { ref, visible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(22px)',
+        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── COMPONENTS ─────────────────────────────────────── */
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  // Track active section via IntersectionObserver + bottom-of-page check
+  useEffect(() => {
+    const sectionIds = ['work', 'process', 'about', 'contact'];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { threshold: 0.15, rootMargin: '-10% 0px -40% 0px' }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    const handleScrollBottom = () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 80) {
+        setActiveSection('contact');
+      }
+    };
+    window.addEventListener('scroll', handleScrollBottom);
+
+    return () => {
+      observers.forEach(o => o.disconnect());
+      window.removeEventListener('scroll', handleScrollBottom);
+    };
+  }, []);
+
+  const links = [
+    { label: 'Work', href: '#work', id: 'work' },
+    { label: 'Process', href: '#process', id: 'process' },
+    { label: 'About', href: '#about', id: 'about' },
+    { label: 'Contact', href: '#contact', id: 'contact' },
+  ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.slice(1);
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        window.history.pushState(null, '', href);
+      }
+    }
+  };
+
+  return (
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-sm border-b border-[#E8E6E1]' : 'bg-transparent'
+        }`}
+    >
+      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Wordmark + role label */}
+        <a href="#" className="flex items-center gap-2.5 group" aria-label="Unesh G — portfolio home">
+          <span className="font-serif italic text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
+            Unesh G
+          </span>
+          <span className="text-[10px] text-[#AAA] uppercase tracking-widest hidden sm:inline pt-0.5">
+            UI · UX Designer
+          </span>
+        </a>
+
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+          {links.map(l => (
+            <a
+              key={l.label}
+              href={l.href}
+              onClick={(e) => handleNavClick(e, l.href)}
+              className={`text-sm transition-colors relative py-1 cursor-pointer ${activeSection === l.id
+                ? 'text-[#111] font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#FF4D6D] after:rounded-full'
+                : 'text-[#555] hover:text-[#111]'
+                }`}
+              aria-current={activeSection === l.id ? 'page' : undefined}
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+            className="text-sm font-medium px-4 py-2 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors cursor-pointer"
+          >
+            Hire me
+          </a>
+        </nav>
+
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden p-2 text-[#111] rounded-md focus-visible:outline-2 focus-visible:outline-[#FF4D6D]"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white/95 backdrop-blur-sm border-t border-[#E8E6E1] px-6 py-5 flex flex-col gap-4">
+          {links.map(l => (
+            <a
+              key={l.label}
+              href={l.href}
+              onClick={(e) => {
+                setMenuOpen(false);
+                handleNavClick(e, l.href);
+              }}
+              className={`text-base transition-colors ${activeSection === l.id ? 'text-[#FF4D6D] font-medium' : 'text-[#333] hover:text-[#FF4D6D]'
+                }`}
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+            onClick={() => setMenuOpen(false)}
+            className="inline-block text-center text-sm font-medium px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors"
+          >
+            Hire me
+          </a>
+        </div>
+      )}
+    </header>
+  );
+}
+
+/* ── STAT COUNTER hook ── */
+function useCountUp(target: number, duration = 1600) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) { setCount(target); return; }
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const pct = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - pct, 3);
+          setCount(Math.round(eased * target));
+          if (pct < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [target, duration]);
+  return { ref, count };
+}
+
+function StatItem({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const { ref, count } = useCountUp(value);
+  return (
+    <div className="flex flex-col items-center gap-1 min-w-0 text-center">
+      <span ref={ref} className="font-serif italic text-2xl sm:text-3xl text-[#111] leading-none tabular-nums">
+        {count}{suffix}
+      </span>
+      <span className="text-[11px] text-[#888] leading-snug text-center">{label}</span>
+    </div>
+  );
+}
+
+function Hero() {
+  const DOMAINS_MARQUEE = ['Healthcare', 'EdTech', 'Fintech', 'E-commerce', 'SaaS', 'Wearables', 'Smart Transit', 'AI Workflows'];
+
+  const SKILL_TAGS = [
+    { label: 'User Research', href: '#about' },
+    { label: 'UI Design', href: '#process' },
+    { label: 'Prototyping', href: '#process' },
+    { label: 'Interaction Design', href: '#about' },
+  ];
+
+  return (
+    <section className="grid-bg pt-16 pb-0 border-b border-[#E8E6E1] overflow-hidden">
+      <div className="max-w-4xl mx-auto px-6 py-[40px] flex flex-col items-center text-center gap-6 sm:gap-7">
+        {/* 1. Availability badge */}
+        <div className="hero-stagger hero-stagger-1 flex items-center justify-center gap-3">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#E8E6E1] shrink-0 shadow-sm">
+            <img
+              src={profileImg}
+              alt="Unesh G — UI/UX Designer, Chennai"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <div className="flex items-center gap-2 bg-[#F8F7F4] border border-[#E8E6E1] px-3.5 py-1.5 rounded-full shadow-xs">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-xs text-[#444] font-medium">Open to work</span>
+          </div>
+        </div>
+
+        {/* 2. Greeting line + Headline */}
+        <div className="hero-stagger hero-stagger-2 max-w-3xl flex flex-col items-center">
+          <p className="text-sm sm:text-base text-[#555] font-normal tracking-normal mb-3 sm:mb-4">
+            Hi, I'm <strong className="text-[#111] font-bold">Unesh G</strong>, a UI/UX Designer from Chennai.
+          </p>
+          <h1
+            className="font-serif italic text-[#111] leading-[1.18] tracking-tight max-w-2xl"
+            style={{ fontSize: 'clamp(1.75rem, 3.8vw, 3.1rem)' }}
+          >
+            I make complex products feel simple.<br className="hidden sm:inline" />
+            <span className="text-[#888]"> From first research to final screens.</span>
+          </h1>
+        </div>
+
+        {/* 3. Subline + skill tags */}
+        <div className="hero-stagger hero-stagger-3 flex flex-col items-center gap-4 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-[#666] leading-relaxed">
+            I have 2+ years of UI/UX design experience, working across web, mobile, and SaaS products. I focus on research, user flows, wireframes, high-fidelity UI, prototyping, and design systems, with AI-assisted workflows to iterate faster.
+          </p>
+          <div className="flex flex-wrap justify-center gap-1.5" role="list" aria-label="Skills">
+            {SKILL_TAGS.map(tag => (
+              <a
+                key={tag.label}
+                href={tag.href}
+                role="listitem"
+                className="text-[11px] text-[#666] border border-[#E8E6E1] px-3.5 py-1 rounded-full bg-[#FAF9F5] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:rounded-full transition-colors cursor-pointer"
+              >
+                {tag.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* 4. CTAs */}
+        <div className="hero-stagger hero-stagger-4 flex flex-wrap items-center justify-center gap-3.5 pt-1">
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              window.history.pushState(null, '', '#contact');
+            }}
+            className="text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors shadow-xs cursor-pointer"
+          >
+            Let's talk
+          </a>
+          <a
+            href="#work"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
+              window.history.pushState(null, '', '#work');
+            }}
+            className="text-sm font-medium px-6 py-2.5 rounded-full border border-[#E8E6E1] bg-white text-[#111] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors shadow-xs cursor-pointer"
+          >
+            See my work ↓
+          </a>
+          <a
+            href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-[#888] underline underline-offset-4 hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:rounded transition-colors px-2 py-1 inline-flex items-center gap-1.5"
+          >
+            <span>Download resume</span>
+            <svg className="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        {/* 5. Proof stats strip */}
+        <div className="hero-stagger hero-stagger-5 w-full max-w-xl pt-8 border-t border-[#E8E6E1]">
+          <div className="grid grid-cols-3 gap-6 justify-center">
+            <StatItem value={2} suffix="+" label="yrs UX experience" />
+            <StatItem value={6} suffix="+" label="case studies" />
+            <StatItem value={6} suffix="" label="domains" />
+          </div>
+        </div>
+
+        {/* 6. Domains marquee */}
+        <div className="hero-stagger hero-stagger-5 overflow-hidden w-full max-w-2xl relative pt-2">
+          {/* Subtle edge fades for smooth marquee */}
+          <div className="absolute left-0 inset-y-0 w-12 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
+          <div className="absolute right-0 inset-y-0 w-12 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
+
+          <div className="hero-marquee-track flex items-center gap-6 w-max" aria-hidden="true">
+            {[...DOMAINS_MARQUEE, ...DOMAINS_MARQUEE, ...DOMAINS_MARQUEE].map((d, i) => (
+              <span key={i} className="text-[11px] text-[#AAA] uppercase tracking-widest shrink-0">
+                {d} <span className="text-[#DDD]">·</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+      {/* ── SCROLL CUE ── */}
+      <div className="flex flex-col items-center gap-2 pb-8 opacity-60" aria-hidden="true">
+        <span className="text-[10px] text-[#AAA] uppercase tracking-widest">Scroll to explore</span>
+        <svg className="hero-bounce w-4 h-4 text-[#CCC]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </section>
+  );
+}
+
+
+function Work() {
+  return (
+    <section id="work" className="border-t border-[#E8E6E1] py-20 sm:py-24 scroll-mt-16">
+      <div className="max-w-6xl mx-auto px-6">
+        <Reveal className="mb-14 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <span className="text-xs font-bold text-[#888] uppercase tracking-[0.2em] mb-3 block">
+              Selected Work
+            </span>
+            <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
+              Featured Case Studies
+            </h2>
+          </div>
+          <p className="text-sm text-[#777] max-w-sm">
+            Handpicked mobile, SaaS, and concept designs built with a focus on user clarity and aesthetic precision.
+          </p>
+        </Reveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
+          {PROJECTS.map((p, i) => (
+            <Reveal key={p.id} delay={i * 0.08}>
+              <div className="group flex flex-col h-full border border-[#E8E6E1] bg-[#FAF9F5] rounded-3xl p-6 sm:p-7 hover:border-[#D5D3CB] transition-all duration-300 shadow-xs hover:shadow-md">
+                {/* Cover Image */}
+                <div className="rounded-2xl overflow-hidden border border-[#E8E6E1] bg-[#F8F7F4] mb-6 aspect-[16/10] relative">
+                  <img
+                    src={p.cover}
+                    alt={p.title}
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-mono font-medium text-[#111] shadow-xs">
+                    {p.index}
+                  </div>
+                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-[#555] shadow-xs">
+                    {p.year}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-col flex-1 justify-between">
+                  <div>
+                    <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] group-hover:text-[#FF4D6D] transition-colors leading-tight mb-3">
+                      {p.title}
+                    </h3>
+                    <p className="text-sm text-[#555] leading-relaxed mb-6">
+                      {p.desc}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {p.tags.map(t => (
+                        <span key={t} className="text-xs text-[#666] bg-[#F0EEE8] px-3 py-1 rounded-full font-medium">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-[#E8E6E1]">
+                      <span className="text-xs text-[#888] font-medium">{p.role}</span>
+                      <a
+                        href="https://www.behance.net/unesh"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] hover:text-[#FF4D6D] transition-colors"
+                      >
+                        View Case Study
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Behance Footer CTA */}
+        <Reveal className="mt-16 text-center">
+          <a
+            href="https://www.behance.net/unesh"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#777] hover:text-[#111] transition-colors bg-[#F8F7F4] px-6 py-3 rounded-full border border-[#E8E6E1] hover:border-[#999]"
+          >
+            View all projects on Behance
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
+            </svg>
+          </a>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Process() {
+  return (
+    <section id="process" className="border-t border-[#E8E6E1] bg-[#F8F7F4] scroll-mt-16">
+      <div className="max-w-5xl mx-auto px-6 py-20 sm:py-24">
+        <Reveal className="mb-14 sm:mb-16">
+          <p className="text-xs text-[#888] uppercase tracking-widest mb-3">Process</p>
+          <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
+            My Design Process
+          </h2>
+        </Reveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-6">
+          {PROCESS.map((p, i) => (
+            <Reveal key={p.step} delay={i * 0.08} className="border-t border-[#E8E6E1] pt-6 flex flex-col justify-start">
+              <span className="text-xs font-mono text-[#FF4D6D] font-semibold tracking-wider block mb-3">
+                {p.step}
+              </span>
+              <h3 className="font-serif italic text-xl text-[#111] mb-2 leading-snug">
+                {p.title}
+              </h3>
+              <p className="text-sm text-[#666] leading-relaxed">
+                {p.desc}
+              </p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section id="about" className="border-t border-[#E8E6E1] scroll-mt-16">
+      <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+          {/* Left column */}
+          <Reveal className="lg:col-span-5">
+            <p className="text-xs text-[#888] uppercase tracking-widest mb-4">About</p>
+            <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight mb-8">
+              Engineer-turned-designer.
+            </h2>
+
+            {/* Profile photo */}
+            <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#E8E6E1] mb-6">
+              <img
+                src={profileImg}
+                alt="Unesh G — UI/UX Designer, Chennai"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
+            {/* Quick facts */}
+            <div className="space-y-3 text-sm">
+              {[
+                ['Location', 'Chennai, Tamil Nadu, India'],
+                ['Education', 'B.E. Electronics & Instrumentation'],
+                ['Training', 'Aspira Design Institute · 6 Months'],
+                ['Currently', 'UI/UX Designer @ GMIndia'],
+                ['Status', '🟢 Open to opportunities'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex gap-4 border-b border-[#F0EEE9] pb-3">
+                  <span className="text-[#AAA] w-24 shrink-0">{label}</span>
+                  <span className="text-[#333]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          {/* Right column */}
+          <div className="lg:col-span-7 space-y-10">
+            <Reveal>
+              <p className="text-base text-[#444] leading-8">
+                My path into design started in a circuit lab. After graduating with a degree in{' '}
+                <em className="italic text-[#111]">Electronics & Instrumentation</em>, I spent a year at
+                Coromandel Electronics designing SMD circuit boards — and realized I cared more about
+                how people interacted with systems than the systems themselves.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <p className="text-base text-[#444] leading-8">
+                I completed 6 months of intensive training at{' '}
+                <em className="italic text-[#111]">Aspira Design Institute</em>, then joined GMIndia as
+                a UI/UX Designer. Today I work across healthcare diagnostics, SaaS platforms, and
+                wearable interfaces — using AI tools to prototype faster without cutting corners on
+                research or accessibility.
+              </p>
+            </Reveal>
+
+            {/* Skills */}
+            <Reveal delay={0.2}>
+              <p className="text-xs text-[#888] uppercase tracking-widest mb-4">Skills & Tools</p>
+              <div className="flex flex-wrap gap-2">
+                {SKILLS.map(s => (
+                  <span
+                    key={s}
+                    className="text-xs text-[#555] border border-[#E8E6E1] px-3 py-1.5 rounded-full hover:border-[#FF4D6D] hover:text-[#FF4D6D] transition-colors cursor-default"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+
+            {/* Timeline */}
+            <Reveal delay={0.3}>
+              <p className="text-xs text-[#888] uppercase tracking-widest mb-6">Timeline</p>
+              <div className="space-y-6">
+                {[
+                  { year: '2024 – Now', title: 'UI/UX Designer', org: 'GMIndia, Chennai' },
+                  { year: '2023 – 24', title: 'UI/UX Certification', org: 'Aspira Design Institute' },
+                  { year: '2022 – 23', title: 'Electronics Engineer', org: 'Coromandel Electronics' },
+                  { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Anna University (Affiliated)' },
+                ].map((item) => (
+                  <div key={item.year} className="flex gap-6 text-sm">
+                    <span className="text-[#AAA] font-mono text-xs w-20 shrink-0 pt-0.5">{item.year}</span>
+                    <div>
+                      <p className="text-[#111] font-medium">{item.title}</p>
+                      <p className="text-[#888] mt-0.5">{item.org}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('unesh0606@gmail.com');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <section id="contact" className="scroll-mt-16 border-t border-[#E8E6E1] bg-[#F8F7F4] py-24 sm:py-28 relative overflow-hidden">
+      {/* Soft gradient accent in the background */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[360px] bg-gradient-to-tr from-[#FF4D6D]/8 via-[#4F6EF7]/5 to-transparent rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <Reveal className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 bg-white border border-[#E8E6E1] px-4 py-1.5 rounded-full shadow-xs mb-5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-medium text-[#444] tracking-wide">
+              Available for full-time roles & projects
+            </span>
+          </div>
+
+          <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-[1.15] mb-5">
+            Let's build something remarkable together.
+          </h2>
+          <p className="text-[#666] text-sm sm:text-base leading-relaxed">
+            Have a project in mind, want to discuss a UI/UX role, or just want to explore ideas? Drop me an email or connect through LinkedIn.
+          </p>
+        </Reveal>
+
+        {/* Primary Contact Card */}
+        <Reveal delay={0.1} className="mb-6">
+          <div className="bg-white border border-[#E8E6E1] rounded-3xl p-7 sm:p-9 shadow-xs hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-14 h-14 rounded-2xl bg-[#FAF9F5] border border-[#E8E6E1] flex items-center justify-center shrink-0 text-[#FF4D6D]">
+                <Mail className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-semibold text-[#888] uppercase tracking-wider block mb-1">
+                  Direct Email
+                </span>
+                <a
+                  href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+                  className="font-mono text-base sm:text-xl font-medium text-[#111] hover:text-[#FF4D6D] transition-colors truncate block"
+                >
+                  unesh0606@gmail.com
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 flex-wrap">
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2.5 rounded-full border border-[#E8E6E1] bg-[#FAF9F5] text-[#333] hover:border-[#111] hover:text-[#111] transition-all cursor-pointer"
+                title="Copy email address"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-emerald-600 font-semibold">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 opacity-70" />
+                    <span>Copy email</span>
+                  </>
+                )}
+              </button>
+
+              <a
+                href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors shadow-xs"
+              >
+                <span>Compose Email</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Secondary Links Grid */}
+        <Reveal delay={0.2} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <a
+            href="https://linkedin.com/in/unesh-g"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group p-6 bg-white border border-[#E8E6E1] rounded-2xl hover:border-[#FF4D6D] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#FAF9F5] border border-[#E8E6E1] flex items-center justify-center font-bold text-sm text-[#0A66C2] group-hover:bg-[#0A66C2] group-hover:text-white group-hover:border-[#0A66C2] transition-colors">
+                in
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-[#111] group-hover:text-[#FF4D6D] transition-colors flex items-center gap-1.5">
+                  LinkedIn
+                </h4>
+                <p className="text-xs text-[#777]">linkedin.com/in/unesh-g</p>
+              </div>
+            </div>
+            <ArrowUpRight className="w-4 h-4 text-[#AAA] group-hover:text-[#FF4D6D] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </a>
+
+          <a
+            href="https://www.behance.net/unesh"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group p-6 bg-white border border-[#E8E6E1] rounded-2xl hover:border-[#FF4D6D] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#FAF9F5] border border-[#E8E6E1] flex items-center justify-center font-bold text-sm text-[#0057FF] group-hover:bg-[#0057FF] group-hover:text-white group-hover:border-[#0057FF] transition-colors">
+                Be
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-[#111] group-hover:text-[#FF4D6D] transition-colors flex items-center gap-1.5">
+                  Behance
+                </h4>
+                <p className="text-xs text-[#777]">behance.net/unesh</p>
+              </div>
+            </div>
+            <ArrowUpRight className="w-4 h-4 text-[#AAA] group-hover:text-[#FF4D6D] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </a>
+        </Reveal>
+
+        {/* Info detail strip */}
+        <Reveal delay={0.25} className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#888] pt-6 border-t border-[#E8E6E1]">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Typical response within 24 hours
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            📍 Chennai, India (IST · UTC+5:30)
+          </span>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+
+function Footer() {
+  return (
+    <footer className="border-t border-[#E8E6E1]">
+      <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#AAA]">
+        <span className="font-serif italic text-sm text-[#333]">Unesh G</span>
+        <span>© 2026 Unesh G. All rights reserved.</span>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── APP ─────────────────────────────────────────────── */
+
+export default function App() {
+  return (
+    <div className="bg-white text-[#111] min-h-screen">
+      <Nav />
+      <main>
+        <Hero />
+        <Work />
+        <Process />
+        <About />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  );
+}
