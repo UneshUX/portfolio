@@ -176,7 +176,7 @@ function Nav() {
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Wordmark */}
         <a href="#" className="flex items-center gap-2.5 group" aria-label="Unesh G — portfolio home">
-          <span className="font-serif italic font-semibold text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
+          <span className="font-bold text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
             Unesh G
           </span>
         </a>
@@ -342,14 +342,14 @@ function Hero() {
       <div className="max-w-4xl mx-auto px-6 py-[40px] flex flex-col items-center text-center gap-6 sm:gap-7">
         {/* 1. Availability badge */}
         <div className="hero-stagger hero-stagger-1 flex items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#E8E6E1] shrink-0 shadow-sm">
+          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#E8E6E1] shrink-0 shadow-lg">
             <img
               src={profileImg}
               alt="Unesh G — UI/UX & Product Designer, Chennai"
               className="w-full h-full object-cover object-top"
             />
           </div>
-          <div className="flex items-center gap-2 bg-[#F8F7F4] border border-[#E8E6E1] px-3.5 py-1.5 rounded-full shadow-xs">
+          <div className="flex items-center gap-2 bg-[#F8F7F4] border border-[#E8E6E1] px-3.5 py-1.5 rounded-full shadow-md">
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
