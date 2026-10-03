@@ -353,7 +353,7 @@ export const BENEFIT_CARDS: BenefitCard[] = [
 export const TIMELINE: TimelineItem[] = [
   {
     period: '2024 — Present',
-    title: 'UI/UX Designer',
+    title: 'UI/UX & Product Designer',
     organization: 'GMIndia',
     location: 'Chennai, Tamil Nadu, India',
     type: 'Full-time',

@@ -97,7 +97,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenHireModal }) => {
 
             {/* Subtext */}
             <p className="max-w-2xl text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal mb-8">
-              UI/UX Designer with <strong className="font-semibold text-slate-900 dark:text-white">2+ years of experience</strong> based in Chennai, India. 
+              UI/UX & Product Designer with <strong className="font-semibold text-slate-900 dark:text-white">2+ years of experience</strong> based in Chennai, India. 
               Crafting user-first digital products from ground-up research to hi-fi prototyping — accelerated with generative AI.
             </p>
 

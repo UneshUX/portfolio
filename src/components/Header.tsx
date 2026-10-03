@@ -60,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode, onOpenHir
                 Unesh G
               </span>
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tracking-wide uppercase flex items-center gap-1">
-                UI/UX Designer <span className="text-[#FF5A79] font-bold">•</span> Chennai
+                Chennai
               </span>
             </div>
           </a>

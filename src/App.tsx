@@ -17,7 +17,6 @@ const PROJECTS = [
     tags: ['Healthcare', 'Mobile App'],
     desc: 'A healthcare experience that brings doctor appointments, lab tests, diagnostics, and medicine access into one simple, connected platform.',
     year: '2025',
-    role: 'Lead UI/UX Designer',
     accent: '#FF4D6D',
     cover: drLabCover,
     link: 'https://www.behance.net/gallery/188507041/DrLab-UIUX-Case-Study-Medical-Appointments-App?platform=direct',
@@ -29,7 +28,6 @@ const PROJECTS = [
     tags: ['SaaS', 'Cloud Storage'],
     desc: 'Reimagining everyday file management with a clean, organized cloud experience built around effortless storage and sharing.',
     year: '2025',
-    role: 'Product Designer',
     accent: '#4F6EF7',
     cover: skyvaultCover,
     link: 'https://www.behance.net/gallery/186306577/Sky-Vault-Cloud-Storage-Dashboard-Web-Application?platform=direct',
@@ -41,7 +39,6 @@ const PROJECTS = [
     tags: ['Concept', 'Productivity'],
     desc: 'A UX concept that brings email threads directly into WhatsApp\'s familiar chat UI — built for India\'s millions of micro-entrepreneurs.',
     year: '2024',
-    role: 'UX Researcher & Designer',
     accent: '#25A244',
     cover: whatsappEmailCover,
     link: 'https://www.behance.net/gallery/191065245/WhatsApp-with-Email-Functionality-Adding-Feature',
@@ -53,7 +50,6 @@ const PROJECTS = [
     tags: ['Wearable', 'Smart Transit'],
     desc: 'A smartwatch-based bus ticketing experience designed to make Chennai\'s city transit faster, simpler, and completely hands-free.',
     year: '2024',
-    role: 'Wearable UX Specialist',
     accent: '#F59E0B',
     cover: busSnapCover,
     link: 'https://www.behance.net/gallery/189370901/Bus-Snap-Bus-Ticket-Booking-App-Watch-App?platform=direct',
@@ -178,13 +174,10 @@ function Nav() {
         }`}
     >
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Wordmark + role label */}
+        {/* Wordmark */}
         <a href="#" className="flex items-center gap-2.5 group" aria-label="Unesh G — portfolio home">
           <span className="font-serif italic font-semibold text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
             Unesh G
-          </span>
-          <span className="text-[10px] text-[#AAA] uppercase tracking-widest hidden sm:inline pt-0.5">
-            UI/UX
           </span>
         </a>
 
@@ -205,10 +198,13 @@ function Nav() {
             </a>
           ))}
           <a
-            href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
-            className="text-sm font-medium px-4 py-2 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors cursor-pointer"
+            href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 cursor-pointer shadow-xs"
           >
-            Hire me
+            <span>Resume</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </a>
         </nav>
 
@@ -249,8 +245,8 @@ function Nav() {
       {/* Mobile menu with smooth blur fade-in & fade-out */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border-b border-[#E8E6E1] bg-white/95 backdrop-blur-md shadow-md ${menuOpen
-            ? 'max-h-80 opacity-100 py-6 px-6 pointer-events-auto'
-            : 'max-h-0 opacity-0 py-0 px-6 pointer-events-none border-transparent'
+          ? 'max-h-80 opacity-100 py-6 px-6 pointer-events-auto'
+          : 'max-h-0 opacity-0 py-0 px-6 pointer-events-none border-transparent'
           }`}
       >
         <div className="flex flex-col gap-4 max-w-5xl mx-auto">
@@ -276,11 +272,14 @@ function Nav() {
             style={{ transitionDelay: menuOpen ? `${links.length * 35 + 40}ms` : '0ms' }}
           >
             <a
-              href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+              href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setMenuOpen(false)}
-              className="block text-center text-sm font-semibold px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors shadow-sm"
+              className="flex items-center justify-center gap-1.5 w-full text-center text-sm font-semibold px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors shadow-sm"
             >
-              Hire me
+              <span>Resume</span>
+              <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -346,7 +345,7 @@ function Hero() {
           <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#E8E6E1] shrink-0 shadow-sm">
             <img
               src={profileImg}
-              alt="Unesh G — UI/UX Designer, Chennai"
+              alt="Unesh G — UI/UX & Product Designer, Chennai"
               className="w-full h-full object-cover object-top"
             />
           </div>
@@ -362,7 +361,7 @@ function Hero() {
         {/* 2. Greeting line + Headline */}
         <div className="hero-stagger hero-stagger-2 max-w-3xl flex flex-col items-center">
           <p className="text-sm sm:text-base text-[#555] font-normal tracking-normal mb-3 sm:mb-4">
-            Hi, I'm <strong className="text-[#111] font-bold">Unesh G</strong>, a UI/UX Designer from Chennai.
+            Hi, I'm <strong className="text-[#111] font-extra bold">Unesh G</strong>, a UI/UX & Product Designer based in Chennai..
           </p>
           <h1
             className="leading-[1.15] tracking-tight max-w-2xl"
@@ -398,12 +397,23 @@ function Hero() {
         {/* 3. Subline */}
         <div className="hero-stagger hero-stagger-3 max-w-2xl mx-auto">
           <p className="text-sm sm:text-base text-[#666] leading-relaxed text-center">
-            2+ years of UI/UX design experience, designing web, mobile, and SaaS products. I work across user research, user flows, wireframing, high-fidelity UI, prototyping, and design systems to create clear and usable digital experiences.
+            3+ years of experience designing web, mobile, SaaS, healthcare, and AI products, combining UX thinking, UI design, prototyping, and design systems.
           </p>
         </div>
 
         {/* 4. CTAs */}
         <div className="hero-stagger hero-stagger-4 flex flex-wrap items-center justify-center gap-3.5 pt-1">
+          <a
+            href="#work"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
+              window.history.pushState(null, '', '#work');
+            }}
+            className="text-sm font-semibold px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_6px_20px_0_rgba(255,77,109,0.4)] cursor-pointer"
+          >
+            View My Work
+          </a>
           <a
             href="#contact"
             onClick={(e) => {
@@ -411,27 +421,16 @@ function Hero() {
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
               window.history.pushState(null, '', '#contact');
             }}
-            className="text-sm font-semibold px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_6px_20px_0_rgba(255,77,109,0.4)] cursor-pointer"
+            className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full border border-[#E8E6E1] bg-white text-[#111] hover:border-[#111] hover:text-[#111] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_2px_8px_0_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] cursor-pointer"
           >
-            Let's talk
-          </a>
-          <a
-            href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full border border-[#E8E6E1] bg-white text-[#111] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_2px_8px_0_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] cursor-pointer"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download Resume
+            Let's Talk
           </a>
         </div>
 
         {/* 5. Proof stats strip */}
         <div className="hero-stagger hero-stagger-5 w-full max-w-xl pt-8 border-t border-[#E8E6E1]">
           <div className="grid grid-cols-3 gap-6 justify-center">
-            <StatItem value={2} suffix="+" label="yrs UX experience" />
+            <StatItem value={3} suffix="+" label="yrs UX experience" />
             <StatItem value={6} suffix="+" label="case studies" />
             <StatItem value={6} suffix="" label="domains" />
           </div>
@@ -475,7 +474,15 @@ function Work() {
             <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">
               Selected Work
             </span>
-            <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
+            <h2
+              className="leading-tight tracking-tight text-[#111]"
+              style={{
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 800,
+                fontStyle: 'italic',
+                fontSize: 'clamp(28px, 4vw, 40px)',
+              }}
+            >
               Featured Case Studies
             </h2>
           </div>
@@ -568,7 +575,15 @@ function Process() {
       <div className="max-w-5xl mx-auto px-6 py-20 sm:py-24">
         <Reveal className="mb-14 sm:mb-16">
           <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">Process</span>
-          <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
+          <h2
+            className="leading-tight tracking-tight text-[#111]"
+            style={{
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: 800,
+              fontStyle: 'italic',
+              fontSize: 'clamp(28px, 4vw, 40px)',
+            }}
+          >
             My Design Process
           </h2>
         </Reveal>
@@ -598,14 +613,14 @@ function About() {
     { year: '2024 – Now', title: 'UI/UX Designer', org: 'GMIndia, Chennai' },
     { year: '2023 – 24', title: 'UI/UX Certification', org: 'Aspira Design Institute' },
     { year: '2022 – 23', title: 'Electronics Engineer', org: 'Coromandel Electronics' },
-    { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Saveetha Engineering College' },
+    { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation Engineering', org: 'Saveetha Engineering College' },
   ];
 
   const QUICK_FACTS = [
     { label: 'Location', value: 'Chennai, Tamil Nadu' },
     { label: 'Currently', value: 'UI/UX Designer @ GMIndia' },
     { label: 'Education', value: 'B.E. Electronics & Instrumentation' },
-    { label: 'Training', value: 'Aspira Design Institute · 6 mo' },
+    { label: 'Training', value: 'Aspira Design Institute · 6 Months' },
   ];
 
   return (
@@ -622,7 +637,7 @@ function About() {
                 fontFamily: "'Sora', sans-serif",
                 fontWeight: 800,
                 fontStyle: 'italic',
-                fontSize: 'clamp(2rem, 4vw, 3rem)',
+                fontSize: 'clamp(28px, 4vw, 40px)',
               }}
             >
               Engineer-turned-designer.
@@ -643,13 +658,13 @@ function About() {
           >
             <img
               src={profileImg}
-              alt="Unesh G — UI/UX Designer"
+              alt="Unesh G — UI/UX & Product Designer"
               className="w-full h-full object-cover object-top"
             />
             {/* Bottom overlay */}
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-5 pt-10 pb-5">
               <p className="text-white font-bold text-base" style={{ fontFamily: "'Sora', sans-serif" }}>Unesh G</p>
-              <p className="text-white/70 text-xs font-medium tracking-wide">UI/UX Designer · Chennai</p>
+              <p className="text-white/70 text-xs font-medium tracking-wide">UI/UX & Product Designer · Chennai</p>
             </div>
           </div>
 
@@ -670,17 +685,22 @@ function About() {
           {/* Bio story */}
           <Reveal className="space-y-5">
             <p className="text-[15px] text-[#444] leading-[1.85]">
-              My path into design started in a circuit lab. After graduating with a{' '}
-              <em className="not-italic font-semibold text-[#111]">Bachelor's degree in Electronics & Instrumentation Engineering</em>,
-              I spent a year at Coromandel Electronics designing SMD circuit boards. During that time,
-              I realised I was more interested in how people interact with systems than how the systems themselves were built.
+              My path into design started in a circuit lab.
             </p>
             <p className="text-[15px] text-[#444] leading-[1.85]">
-              I then completed 6 months of intensive UI/UX training at{' '}
-              <em className="not-italic font-semibold text-[#111]">Aspira Design Institute</em>, then joined{' '}
-              <em className="not-italic font-semibold text-[#111]">GMIndia</em> as a UI/UX Designer.
-              Today I work across healthcare diagnostics, SaaS platforms, and wearable interfaces —
-              using AI-assisted workflows to iterate faster without cutting corners on research or accessibility.
+              After graduating with a{' '}
+              <strong className="font-semibold text-[#111]">Bachelor’s degree in Electronics &amp; Instrumentation Engineering</strong>, I spent a year at{' '}
+              <strong className="font-semibold text-[#111]">Coromandel Electronics</strong> designing SMD circuit boards. While I enjoyed understanding how systems worked, I became more curious about{' '}
+              <strong className="font-semibold text-[#111]">how people interact with them</strong>.
+            </p>
+            <p className="text-[15px] text-[#444] leading-[1.85]">
+              That curiosity led me to <strong className="font-semibold text-[#111]">UI/UX design</strong>. After 6 months of intensive training at{' '}
+              <strong className="font-semibold text-[#111]">Aspira Design Institute</strong>, I joined{' '}
+              <strong className="font-semibold text-[#111]">GMIndia</strong> as a UI/UX Designer.
+            </p>
+            <p className="text-[15px] text-[#444] leading-[1.85]">
+              Today, I design experiences across <strong className="font-semibold text-[#111]">healthcare, SaaS, and digital products</strong>, combining UX thinking, visual design, and AI-assisted workflows to create experiences that are{' '}
+              <strong className="font-semibold text-[#111]">simple, accessible, and purposeful</strong>.
             </p>
           </Reveal>
 
@@ -767,11 +787,19 @@ function Contact() {
             </span>
           </div>
 
-          <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-[1.15] mb-5">
+          <h2
+            className="leading-tight tracking-tight text-[#111] mb-5"
+            style={{
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: 800,
+              fontStyle: 'italic',
+              fontSize: 'clamp(28px, 4vw, 40px)',
+            }}
+          >
             Let's build something remarkable together.
           </h2>
           <p className="text-[#666] text-sm sm:text-base leading-relaxed">
-            Have a project in mind, want to discuss a UI/UX role, or just want to explore ideas? Drop me an email or connect through LinkedIn.
+            Have a project in mind, want to discuss a UI/UX & Product Design role, or just want to explore ideas? Drop me an email or connect through LinkedIn.
           </p>
         </Reveal>
 
@@ -787,7 +815,7 @@ function Contact() {
                   Direct Email
                 </span>
                 <a
-                  href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+                  href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20%26%20Product%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
                   className="font-mono text-base sm:text-xl font-medium text-[#111] hover:text-[#FF4D6D] transition-colors truncate block"
                 >
                   unesh0606@gmail.com
@@ -816,7 +844,7 @@ function Contact() {
               </button>
 
               <a
-                href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+                href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20%26%20Product%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
                 className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors shadow-xs"
               >
                 <span>Compose Email</span>
@@ -937,7 +965,7 @@ function Loader({ onDone }: { onDone: () => void }) {
         className="text-[#888] text-[13px] font-medium tracking-[0.3em] uppercase mt-5"
         style={{ animation: 'loaderFadeUp 0.5s ease both', animationDelay: '0.7s' }}
       >
-        UI / UX Designer
+        UI/UX & Product Designer
       </p>
 
       {/* Loading bar */}

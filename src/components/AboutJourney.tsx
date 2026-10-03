@@ -50,7 +50,7 @@ export const AboutJourney: React.FC = () => {
                   </span>
 
                   <span className="text-xs font-semibold text-[#FF5A79] bg-pink-50 dark:bg-pink-950/60 px-3 py-1 rounded-full mb-3">
-                    UI/UX Designer • Chennai, India
+                    UI/UX & Product Designer • Chennai, India
                   </span>
 
                   <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
@@ -87,7 +87,7 @@ export const AboutJourney: React.FC = () => {
             </p>
 
             <p className="text-slate-600 dark:text-slate-300 text-base leading-relaxed">
-              To formalize my transition into digital product design, I completed <strong className="text-slate-900 dark:text-white">6 months of intensive training</strong> at the prestigious <strong className="text-slate-900 dark:text-white">Aspira Design Institute</strong>. Today, as a UI/UX Designer at GMIndia, I specialize in healthcare diagnostics, cloud SaaS apps, smartwatch interfaces, and AI-driven prototyping workflows.
+              To formalize my transition into digital product design, I completed <strong className="text-slate-900 dark:text-white">6 months of intensive training</strong> at the prestigious <strong className="text-slate-900 dark:text-white">Aspira Design Institute</strong>. Today, as a UI/UX & Product Designer at GMIndia, I specialize in healthcare diagnostics, cloud SaaS apps, smartwatch interfaces, and AI-driven prototyping workflows.
             </p>
 
             <div className="pt-2 flex flex-wrap gap-3">
