@@ -306,13 +306,6 @@ function StatItem({ value, suffix, label }: { value: number; suffix: string; lab
 function Hero() {
   const DOMAINS_MARQUEE = ['Healthcare', 'EdTech', 'Fintech', 'E-commerce', 'SaaS', 'Wearables', 'AI Workflows'];
 
-  const SKILL_TAGS = [
-    { label: 'User Research', href: '#about' },
-    { label: 'UI Design', href: '#process' },
-    { label: 'Prototyping', href: '#process' },
-    { label: 'Interaction Design', href: '#about' },
-  ];
-
   return (
     <section className="grid-bg pt-16 pb-0 border-b border-[#E8E6E1] overflow-hidden">
       <div className="max-w-4xl mx-auto px-6 py-[40px] flex flex-col items-center text-center gap-6 sm:gap-7">
