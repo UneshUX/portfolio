@@ -180,11 +180,11 @@ function Nav() {
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Wordmark + role label */}
         <a href="#" className="flex items-center gap-2.5 group" aria-label="Unesh G — portfolio home">
-          <span className="font-serif italic text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
+          <span className="font-serif italic font-semibold text-[#111] text-lg tracking-tight group-hover:text-[#FF4D6D] transition-colors">
             Unesh G
           </span>
           <span className="text-[10px] text-[#AAA] uppercase tracking-widest hidden sm:inline pt-0.5">
-            UI · UX Designer
+            UI/UX
           </span>
         </a>
 
@@ -212,29 +212,52 @@ function Nav() {
           </a>
         </nav>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-2 text-[#111] rounded-md focus-visible:outline-2 focus-visible:outline-[#FF4D6D]"
+          className="md:hidden p-2 text-[#111] rounded-lg hover:bg-black/5 active:scale-95 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#FF4D6D]"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+          <div className="w-5 h-5 relative flex items-center justify-center">
+            <svg
+              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${
+                menuOpen ? 'rotate-90 opacity-100 scale-100' : 'rotate-0 opacity-0 scale-75'
+              }`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+            <svg
+              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${
+                !menuOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-90 opacity-0 scale-75'
+              }`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-          )}
+          </div>
         </button>
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-sm border-t border-[#E8E6E1] px-6 py-5 flex flex-col gap-4">
-          {links.map(l => (
+      {/* Mobile menu with smooth blur fade-in & fade-out */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border-b border-[#E8E6E1] bg-white/95 backdrop-blur-md shadow-md ${
+          menuOpen
+            ? 'max-h-80 opacity-100 py-6 px-6 pointer-events-auto'
+            : 'max-h-0 opacity-0 py-0 px-6 pointer-events-none border-transparent'
+        }`}
+      >
+        <div className="flex flex-col gap-4 max-w-5xl mx-auto">
+          {links.map((l, i) => (
             <a
               key={l.label}
               href={l.href}
@@ -242,21 +265,32 @@ function Nav() {
                 setMenuOpen(false);
                 handleNavClick(e, l.href);
               }}
-              className={`text-base transition-colors ${activeSection === l.id ? 'text-[#FF4D6D] font-medium' : 'text-[#333] hover:text-[#FF4D6D]'
-                }`}
+              className={`text-base font-medium transition-all duration-300 transform ${
+                menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+              } ${
+                activeSection === l.id ? 'text-[#FF4D6D] font-semibold' : 'text-[#111] hover:text-[#FF4D6D]'
+              }`}
+              style={{ transitionDelay: menuOpen ? `${i * 35 + 40}ms` : '0ms' }}
             >
               {l.label}
             </a>
           ))}
-          <a
-            href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
-            onClick={() => setMenuOpen(false)}
-            className="inline-block text-center text-sm font-medium px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors"
+          <div
+            className={`pt-2 transition-all duration-300 transform ${
+              menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+            }`}
+            style={{ transitionDelay: menuOpen ? `${links.length * 35 + 40}ms` : '0ms' }}
           >
-            Hire me
-          </a>
+            <a
+              href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
+              onClick={() => setMenuOpen(false)}
+              className="block text-center text-sm font-semibold px-5 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] transition-colors shadow-sm"
+            >
+              Hire me
+            </a>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
@@ -295,7 +329,11 @@ function StatItem({ value, suffix, label }: { value: number; suffix: string; lab
   const { ref, count } = useCountUp(value);
   return (
     <div className="flex flex-col items-center gap-1 min-w-0 text-center">
-      <span ref={ref} className="font-serif italic text-2xl sm:text-3xl text-[#111] leading-none tabular-nums">
+      <span
+        ref={ref}
+        className="text-2xl sm:text-3xl text-[#111] leading-none tabular-nums"
+        style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontStyle: 'italic' }}
+      >
         {count}{suffix}
       </span>
       <span className="text-[11px] text-[#888] leading-snug text-center">{label}</span>
@@ -379,31 +417,20 @@ function Hero() {
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
               window.history.pushState(null, '', '#contact');
             }}
-            className="text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors shadow-xs cursor-pointer"
+            className="text-sm font-semibold px-6 py-2.5 rounded-full bg-[#111] text-white hover:bg-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_6px_20px_0_rgba(255,77,109,0.4)] cursor-pointer"
           >
             Let's talk
-          </a>
-          <a
-            href="#work"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
-              window.history.pushState(null, '', '#work');
-            }}
-            className="text-sm font-medium px-6 py-2.5 rounded-full border border-[#E8E6E1] bg-white text-[#111] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-colors shadow-xs cursor-pointer"
-          >
-            See my work ↓
           </a>
           <a
             href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-[#888] underline underline-offset-4 hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:rounded transition-colors px-2 py-1 inline-flex items-center gap-1.5"
+            className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full border border-[#E8E6E1] bg-white text-[#111] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_2px_8px_0_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] cursor-pointer"
           >
-            <span>Download resume</span>
-            <svg className="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
+            Download Resume
           </a>
         </div>
 
@@ -451,7 +478,7 @@ function Work() {
       <div className="max-w-6xl mx-auto px-6">
         <Reveal className="mb-14 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-bold text-[#888] uppercase tracking-[0.2em] mb-3 block">
+            <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">
               Selected Work
             </span>
             <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
@@ -546,7 +573,7 @@ function Process() {
     <section id="process" className="border-t border-[#E8E6E1] bg-[#F8F7F4] scroll-mt-16">
       <div className="max-w-5xl mx-auto px-6 py-20 sm:py-24">
         <Reveal className="mb-14 sm:mb-16">
-          <p className="text-xs text-[#888] uppercase tracking-widest mb-3">Process</p>
+          <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">Process</span>
           <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight">
             My Design Process
           </h2>
@@ -593,7 +620,7 @@ function About() {
       {/* ── HEADER BAND ── */}
       <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-20 pb-0">
         <Reveal>
-          <span className="text-[11px] font-bold text-[#FF4D6D] uppercase tracking-[0.22em] mb-3 block">About</span>
+          <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">About</span>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4">
             <h2
               className="leading-tight tracking-tight text-[#111]"
@@ -665,7 +692,7 @@ function About() {
 
           {/* Timeline */}
           <Reveal delay={0.1}>
-            <p className="text-[11px] font-bold text-[#AAA] uppercase tracking-[0.2em] mb-6">Career Timeline</p>
+            <p className="text-[11px] font-bold text-[#888] uppercase tracking-[0.2em] mb-6">Career Timeline</p>
             <div className="relative">
               {/* Vertical line */}
               <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[#EDEBE6]" />
@@ -697,7 +724,7 @@ function About() {
 
           {/* Skills */}
           <Reveal delay={0.2}>
-            <p className="text-[11px] font-bold text-[#AAA] uppercase tracking-[0.2em] mb-4">Skills & Tools</p>
+            <p className="text-[11px] font-bold text-[#888] uppercase tracking-[0.2em] mb-4">Skills & Tools</p>
             <div className="flex flex-wrap gap-2">
               {SKILLS.map(s => (
                 <span
@@ -735,6 +762,7 @@ function Contact() {
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <Reveal className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">Contact</span>
           <div className="inline-flex items-center gap-2 bg-white border border-[#E8E6E1] px-4 py-1.5 rounded-full shadow-xs mb-5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -867,27 +895,144 @@ function Footer() {
   return (
     <footer className="border-t border-[#E8E6E1]">
       <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#AAA]">
-        <span className="font-serif italic text-sm text-[#333]">Unesh G</span>
+        <span className="font-serif italic font-semibold text-sm text-[#333]">Unesh G</span>
         <span>© 2026 Unesh G. All rights reserved.</span>
       </div>
     </footer>
   );
 }
 
+/* ─── LOADER ─────────────────────────────────────────────── */
+
+function Loader({ onDone }: { onDone: () => void }) {
+  const name = 'Unesh G';
+
+  useEffect(() => {
+    const t = setTimeout(onDone, 2600);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white"
+      style={{ fontFamily: "'Sora', sans-serif" }}
+    >
+      {/* Animated name */}
+      <div className="overflow-hidden px-4 py-2 -mx-4 -my-2">
+        <h1
+          className="text-[clamp(2.6rem,8vw,6rem)] font-black italic text-[#111] leading-[1.15] tracking-tight flex pr-3"
+          aria-label={name}
+        >
+          {name.split('').map((ch, i) => (
+            <span
+              key={i}
+              className="inline-block pr-[0.08em]"
+              style={{
+                animation: `loaderLetterIn 0.55s cubic-bezier(0.22,1,0.36,1) both`,
+                animationDelay: `${i * 0.045}s`,
+              }}
+            >
+              {ch === ' ' ? '\u00A0' : ch}
+            </span>
+          ))}
+        </h1>
+      </div>
+
+      {/* Subtitle */}
+      <p
+        className="text-[#888] text-[13px] font-medium tracking-[0.3em] uppercase mt-5"
+        style={{ animation: 'loaderFadeUp 0.5s ease both', animationDelay: '0.7s' }}
+      >
+        UI / UX Designer
+      </p>
+
+      {/* Loading bar */}
+      <div
+        className="mt-10 w-32 h-px bg-[#E5E5E5] overflow-hidden rounded-full"
+        style={{ animation: 'loaderFadeUp 0.4s ease both', animationDelay: '0.9s' }}
+      >
+        <div
+          className="h-full bg-[#111] rounded-full"
+          style={{ animation: 'loaderBar 1.6s cubic-bezier(0.4,0,0.2,1) 1s both' }}
+        />
+      </div>
+
+      {/* Loading text */}
+      <p
+        className="text-[#888] text-[11px] tracking-[0.25em] uppercase mt-3"
+        style={{ animation: 'loaderFadeUp 0.4s ease both', animationDelay: '1s' }}
+      >
+        Loading
+        <span style={{ animation: 'loaderDots 1.2s steps(3,end) 1s infinite' }}>...</span>
+      </p>
+
+      <style>{`
+        @keyframes loaderLetterIn {
+          from { opacity: 0; transform: translateY(60px) skewY(6deg); }
+          to   { opacity: 1; transform: translateY(0)    skewY(0deg); }
+        }
+        @keyframes loaderFadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes loaderBar {
+          from { width: 0%; }
+          to   { width: 100%; }
+        }
+        @keyframes loaderDots {
+          0%   { content: '.'; }
+          33%  { content: '..'; }
+          66%  { content: '...'; }
+          100% { content: '.'; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 /* ─── APP ─────────────────────────────────────────────── */
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  const handleDone = () => {
+    setFadeOut(true);
+    setTimeout(() => setLoading(false), 500);
+  };
+
   return (
     <div className="bg-white text-[#111] min-h-screen">
-      <Nav />
-      <main>
-        <Hero />
-        <Work />
-        <Process />
-        <About />
-        <Contact />
-      </main>
-      <Footer />
+      {/* Loader */}
+      {loading && (
+        <div
+          style={{
+            transition: 'opacity 0.5s ease',
+            opacity: fadeOut ? 0 : 1,
+            pointerEvents: fadeOut ? 'none' : 'auto',
+          }}
+        >
+          <Loader onDone={handleDone} />
+        </div>
+      )}
+
+      {/* Page content — fades in after loader */}
+      <div
+        style={{
+          opacity: loading && !fadeOut ? 0 : 1,
+          transition: 'opacity 0.6s ease 0.1s',
+        }}
+      >
+        <Nav />
+        <main>
+          <Hero />
+          <Work />
+          <Process />
+          <About />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }
