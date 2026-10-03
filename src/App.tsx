@@ -221,9 +221,8 @@ function Nav() {
         >
           <div className="w-5 h-5 relative flex items-center justify-center">
             <svg
-              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${
-                menuOpen ? 'rotate-90 opacity-100 scale-100' : 'rotate-0 opacity-0 scale-75'
-              }`}
+              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${menuOpen ? 'rotate-90 opacity-100 scale-100' : 'rotate-0 opacity-0 scale-75'
+                }`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -233,9 +232,8 @@ function Nav() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
             <svg
-              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${
-                !menuOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-90 opacity-0 scale-75'
-              }`}
+              className={`w-5 h-5 absolute inset-0 transition-all duration-300 transform ${!menuOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-90 opacity-0 scale-75'
+                }`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -250,11 +248,10 @@ function Nav() {
 
       {/* Mobile menu with smooth blur fade-in & fade-out */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border-b border-[#E8E6E1] bg-white/95 backdrop-blur-md shadow-md ${
-          menuOpen
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border-b border-[#E8E6E1] bg-white/95 backdrop-blur-md shadow-md ${menuOpen
             ? 'max-h-80 opacity-100 py-6 px-6 pointer-events-auto'
             : 'max-h-0 opacity-0 py-0 px-6 pointer-events-none border-transparent'
-        }`}
+          }`}
       >
         <div className="flex flex-col gap-4 max-w-5xl mx-auto">
           {links.map((l, i) => (
@@ -265,20 +262,17 @@ function Nav() {
                 setMenuOpen(false);
                 handleNavClick(e, l.href);
               }}
-              className={`text-base font-medium transition-all duration-300 transform ${
-                menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
-              } ${
-                activeSection === l.id ? 'text-[#FF4D6D] font-semibold' : 'text-[#111] hover:text-[#FF4D6D]'
-              }`}
+              className={`text-base font-medium transition-all duration-300 transform ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+                } ${activeSection === l.id ? 'text-[#FF4D6D] font-semibold' : 'text-[#111] hover:text-[#FF4D6D]'
+                }`}
               style={{ transitionDelay: menuOpen ? `${i * 35 + 40}ms` : '0ms' }}
             >
               {l.label}
             </a>
           ))}
           <div
-            className={`pt-2 transition-all duration-300 transform ${
-              menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
-            }`}
+            className={`pt-2 transition-all duration-300 transform ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+              }`}
             style={{ transitionDelay: menuOpen ? `${links.length * 35 + 40}ms` : '0ms' }}
           >
             <a
@@ -604,7 +598,7 @@ function About() {
     { year: '2024 – Now', title: 'UI/UX Designer', org: 'GMIndia, Chennai' },
     { year: '2023 – 24', title: 'UI/UX Certification', org: 'Aspira Design Institute' },
     { year: '2022 – 23', title: 'Electronics Engineer', org: 'Coromandel Electronics' },
-    { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Anna University' },
+    { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Saveetha Engineering College' },
   ];
 
   const QUICK_FACTS = [
