@@ -361,7 +361,7 @@ function Hero() {
         {/* 2. Greeting line + Headline */}
         <div className="hero-stagger hero-stagger-2 max-w-3xl flex flex-col items-center">
           <p className="text-sm sm:text-base text-[#555] font-normal tracking-normal mb-3 sm:mb-4">
-            Hi, I'm <strong className="text-[#111] font-extra bold">Unesh G</strong>, a UI/UX & Product Designer based in Chennai..
+            Hi, I'm <strong className="text-[#111] font-extra bold">Unesh G</strong>, a UI/UX & Product Designer based in Chennai.
           </p>
           <h1
             className="leading-[1.15] tracking-tight max-w-2xl"
