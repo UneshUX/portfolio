@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: 'Instrument Serif', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Sora', system-ui, sans-serif;
+  --font-sans: 'Poppins', system-ui, -apple-system, sans-serif;
   --color-accent: #FF4D6D;
   --color-bg: #FFFFFF;
   --color-surface: #F8F7F4;
@@ -22,6 +22,16 @@
   h3,
   .serif {
     font-family: var(--font-serif);
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  /* Reusable gradient-text utility */
+  .gradient-text {
+    background: linear-gradient(120deg, #FF4D6D 0%, #ff8fa3 50%, #e8335a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   :focus-visible {

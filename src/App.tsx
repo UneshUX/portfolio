@@ -20,6 +20,7 @@ const PROJECTS = [
     role: 'Lead UI/UX Designer',
     accent: '#FF4D6D',
     cover: drLabCover,
+    link: 'https://www.behance.net/gallery/188507041/DrLab-UIUX-Case-Study-Medical-Appointments-App?platform=direct',
   },
   {
     id: 'sky-vault',
@@ -31,6 +32,7 @@ const PROJECTS = [
     role: 'Product Designer',
     accent: '#4F6EF7',
     cover: skyvaultCover,
+    link: 'https://www.behance.net/gallery/186306577/Sky-Vault-Cloud-Storage-Dashboard-Web-Application?platform=direct',
   },
   {
     id: 'whatsapp-email',
@@ -42,17 +44,19 @@ const PROJECTS = [
     role: 'UX Researcher & Designer',
     accent: '#25A244',
     cover: whatsappEmailCover,
+    link: 'https://www.behance.net/gallery/191065245/WhatsApp-with-Email-Functionality-Adding-Feature',
   },
   {
     id: 'bus-snap',
     index: '04',
     title: 'Bus Snap',
     tags: ['Wearable', 'Smart Transit'],
-    desc: 'A smartwatch-based bus ticketing experience designed to make Chennai’s city transit faster, simpler, and completely hands-free.',
+    desc: 'A smartwatch-based bus ticketing experience designed to make Chennai\'s city transit faster, simpler, and completely hands-free.',
     year: '2024',
     role: 'Wearable UX Specialist',
     accent: '#F59E0B',
     cover: busSnapCover,
+    link: 'https://www.behance.net/gallery/189370901/Bus-Snap-Bus-Ticket-Booking-App-Watch-App?platform=direct',
   },
 ];
 
@@ -300,7 +304,7 @@ function StatItem({ value, suffix, label }: { value: number; suffix: string; lab
 }
 
 function Hero() {
-  const DOMAINS_MARQUEE = ['Healthcare', 'EdTech', 'Fintech', 'E-commerce', 'SaaS', 'Wearables', 'Smart Transit', 'AI Workflows'];
+  const DOMAINS_MARQUEE = ['Healthcare', 'EdTech', 'Fintech', 'E-commerce', 'SaaS', 'Wearables', 'AI Workflows'];
 
   const SKILL_TAGS = [
     { label: 'User Research', href: '#about' },
@@ -336,31 +340,41 @@ function Hero() {
             Hi, I'm <strong className="text-[#111] font-bold">Unesh G</strong>, a UI/UX Designer from Chennai.
           </p>
           <h1
-            className="font-serif italic text-[#111] leading-[1.18] tracking-tight max-w-2xl"
-            style={{ fontSize: 'clamp(1.75rem, 3.8vw, 3.1rem)' }}
+            className="leading-[1.15] tracking-tight max-w-2xl"
+            style={{
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: 800,
+              fontStyle: 'italic',
+              fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+            }}
           >
-            I make complex products feel simple.<br className="hidden sm:inline" />
-            <span className="text-[#888]"> From first research to final screens.</span>
+            {/* Main display line — solid black */}
+            <span style={{ color: '#111', WebkitTextFillColor: '#111' }}>
+              I make complex products feel simple.
+            </span>
+            {/* Sub-line — 0.52em of parent, always proportional */}
+            <span
+              className="block mt-1"
+              style={{
+                fontSize: '0.52em',
+                fontWeight: 600,
+                fontStyle: 'italic',
+                color: '#888',
+                WebkitTextFillColor: '#888',
+                lineHeight: 1.35,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              From user needs to intuitive experiences.
+            </span>
           </h1>
         </div>
 
-        {/* 3. Subline + skill tags */}
-        <div className="hero-stagger hero-stagger-3 flex flex-col items-center gap-4 max-w-2xl mx-auto">
-          <p className="text-sm sm:text-base text-[#666] leading-relaxed">
-            I have 2+ years of UI/UX design experience, working across web, mobile, and SaaS products. I focus on research, user flows, wireframes, high-fidelity UI, prototyping, and design systems, with AI-assisted workflows to iterate faster.
+        {/* 3. Subline */}
+        <div className="hero-stagger hero-stagger-3 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-[#666] leading-relaxed text-center">
+            2+ years of UI/UX design experience, designing web, mobile, and SaaS products. I work across user research, user flows, wireframing, high-fidelity UI, prototyping, and design systems to create clear and usable digital experiences.
           </p>
-          <div className="flex flex-wrap justify-center gap-1.5" role="list" aria-label="Skills">
-            {SKILL_TAGS.map(tag => (
-              <a
-                key={tag.label}
-                href={tag.href}
-                role="listitem"
-                className="text-[11px] text-[#666] border border-[#E8E6E1] px-3.5 py-1 rounded-full bg-[#FAF9F5] hover:border-[#FF4D6D] hover:text-[#FF4D6D] focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:rounded-full transition-colors cursor-pointer"
-              >
-                {tag.label}
-              </a>
-            ))}
-          </div>
         </div>
 
         {/* 4. CTAs */}
@@ -495,10 +509,9 @@ function Work() {
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-[#E8E6E1]">
-                      <span className="text-xs text-[#888] font-medium">{p.role}</span>
+                    <div className="flex items-center justify-end pt-4 border-t border-[#E8E6E1]">
                       <a
-                        href="https://www.behance.net/unesh"
+                        href={p.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] hover:text-[#FF4D6D] transition-colors"
@@ -567,101 +580,142 @@ function Process() {
 }
 
 function About() {
-  return (
-    <section id="about" className="border-t border-[#E8E6E1] scroll-mt-16">
-      <div className="max-w-5xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+  const TIMELINE = [
+    { year: '2024 – Now', title: 'UI/UX Designer', org: 'GMIndia, Chennai' },
+    { year: '2023 – 24', title: 'UI/UX Certification', org: 'Aspira Design Institute' },
+    { year: '2022 – 23', title: 'Electronics Engineer', org: 'Coromandel Electronics' },
+    { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Anna University' },
+  ];
 
-          {/* Left column */}
-          <Reveal className="lg:col-span-5">
-            <p className="text-xs text-[#888] uppercase tracking-widest mb-4">About</p>
-            <h2 className="font-serif italic text-4xl sm:text-5xl text-[#111] leading-tight mb-8">
+  const QUICK_FACTS = [
+    { label: 'Location', value: 'Chennai, Tamil Nadu' },
+    { label: 'Currently', value: 'UI/UX Designer @ GMIndia' },
+    { label: 'Education', value: 'B.E. Electronics & Instrumentation' },
+    { label: 'Training', value: 'Aspira Design Institute · 6 mo' },
+  ];
+
+  return (
+    <section id="about" className="border-t border-[#E8E6E1] scroll-mt-16 bg-white">
+
+      {/* ── HEADER BAND ── */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-20 pb-0">
+        <Reveal>
+          <span className="text-[11px] font-bold text-[#FF4D6D] uppercase tracking-[0.22em] mb-3 block">About</span>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4">
+            <h2
+              className="leading-tight tracking-tight text-[#111]"
+              style={{
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 800,
+                fontStyle: 'italic',
+                fontSize: 'clamp(2rem, 4vw, 3rem)',
+              }}
+            >
               Engineer-turned-designer.
             </h2>
+          </div>
+        </Reveal>
+      </div>
 
-            {/* Profile photo */}
-            <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#E8E6E1] mb-6">
-              <img
-                src={profileImg}
-                alt="Unesh G — UI/UX Designer, Chennai"
-                className="w-full h-full object-cover object-top"
-              />
+      {/* ── MAIN GRID ── */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 py-14 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+
+        {/* ════ LEFT — Photo + Quick Facts ════ */}
+        <Reveal className="lg:col-span-4 flex flex-col gap-6">
+
+          {/* Profile photo card */}
+          <div className="relative rounded-2xl overflow-hidden border border-[#E8E6E1] shadow-sm"
+            style={{ aspectRatio: '3/4' }}
+          >
+            <img
+              src={profileImg}
+              alt="Unesh G — UI/UX Designer"
+              className="w-full h-full object-cover object-top"
+            />
+            {/* Bottom overlay */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-5 pt-10 pb-5">
+              <p className="text-white font-bold text-base" style={{ fontFamily: "'Sora', sans-serif" }}>Unesh G</p>
+              <p className="text-white/70 text-xs font-medium tracking-wide">UI/UX Designer · Chennai</p>
             </div>
+          </div>
 
-            {/* Quick facts */}
-            <div className="space-y-3 text-sm">
-              {[
-                ['Location', 'Chennai, Tamil Nadu, India'],
-                ['Education', 'B.E. Electronics & Instrumentation'],
-                ['Training', 'Aspira Design Institute · 6 Months'],
-                ['Currently', 'UI/UX Designer @ GMIndia'],
-                ['Status', '🟢 Open to opportunities'],
-              ].map(([label, value]) => (
-                <div key={label} className="flex gap-4 border-b border-[#F0EEE9] pb-3">
-                  <span className="text-[#AAA] w-24 shrink-0">{label}</span>
-                  <span className="text-[#333]">{value}</span>
-                </div>
-              ))}
+          {/* Quick facts card */}
+          <div className="bg-[#F8F7F4] rounded-2xl border border-[#EDEBE6] p-5 space-y-3">
+            {QUICK_FACTS.map(({ label, value }) => (
+              <div key={label} className="flex items-start gap-3 text-sm pb-3 border-b border-[#EDEBE6] last:border-0 last:pb-0">
+                <span className="text-[#BBB] text-[11px] font-semibold uppercase tracking-wide w-20 shrink-0 pt-0.5">{label}</span>
+                <span className="text-[#333] font-medium leading-snug">{value}</span>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ════ RIGHT — Story + Timeline + Skills ════ */}
+        <div className="lg:col-span-8 flex flex-col gap-12">
+
+          {/* Bio story */}
+          <Reveal className="space-y-5">
+            <p className="text-[15px] text-[#444] leading-[1.85]">
+              My path into design started in a circuit lab. After graduating with a{' '}
+              <em className="not-italic font-semibold text-[#111]">Bachelor's degree in Electronics & Instrumentation Engineering</em>,
+              I spent a year at Coromandel Electronics designing SMD circuit boards. During that time,
+              I realised I was more interested in how people interact with systems than how the systems themselves were built.
+            </p>
+            <p className="text-[15px] text-[#444] leading-[1.85]">
+              I then completed 6 months of intensive UI/UX training at{' '}
+              <em className="not-italic font-semibold text-[#111]">Aspira Design Institute</em>, then joined{' '}
+              <em className="not-italic font-semibold text-[#111]">GMIndia</em> as a UI/UX Designer.
+              Today I work across healthcare diagnostics, SaaS platforms, and wearable interfaces —
+              using AI-assisted workflows to iterate faster without cutting corners on research or accessibility.
+            </p>
+          </Reveal>
+
+          {/* Timeline */}
+          <Reveal delay={0.1}>
+            <p className="text-[11px] font-bold text-[#AAA] uppercase tracking-[0.2em] mb-6">Career Timeline</p>
+            <div className="relative">
+              {/* Vertical line */}
+              <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[#EDEBE6]" />
+              <div className="space-y-6 pl-7">
+                {TIMELINE.map((item, i) => (
+                  <Reveal key={item.year} delay={i * 0.07}>
+                    <div className="relative">
+                      {/* Dot — single neutral color */}
+                      <div
+                        className="absolute -left-7 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm bg-[#111]"
+                      />
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5">
+                        <div>
+                          <p className="text-sm font-bold text-[#111]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                            {item.title}
+                          </p>
+                          <p className="text-xs text-[#888] mt-0.5">{item.org}</p>
+                        </div>
+                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 self-start sm:self-center bg-[#F0EEE9] text-[#555]">
+                          {item.year}
+                        </span>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </Reveal>
 
-          {/* Right column */}
-          <div className="lg:col-span-7 space-y-10">
-            <Reveal>
-              <p className="text-base text-[#444] leading-8">
-                My path into design started in a circuit lab. After graduating with a degree in{' '}
-                <em className="italic text-[#111]">Electronics & Instrumentation</em>, I spent a year at
-                Coromandel Electronics designing SMD circuit boards — and realized I cared more about
-                how people interacted with systems than the systems themselves.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <p className="text-base text-[#444] leading-8">
-                I completed 6 months of intensive training at{' '}
-                <em className="italic text-[#111]">Aspira Design Institute</em>, then joined GMIndia as
-                a UI/UX Designer. Today I work across healthcare diagnostics, SaaS platforms, and
-                wearable interfaces — using AI tools to prototype faster without cutting corners on
-                research or accessibility.
-              </p>
-            </Reveal>
-
-            {/* Skills */}
-            <Reveal delay={0.2}>
-              <p className="text-xs text-[#888] uppercase tracking-widest mb-4">Skills & Tools</p>
-              <div className="flex flex-wrap gap-2">
-                {SKILLS.map(s => (
-                  <span
-                    key={s}
-                    className="text-xs text-[#555] border border-[#E8E6E1] px-3 py-1.5 rounded-full hover:border-[#FF4D6D] hover:text-[#FF4D6D] transition-colors cursor-default"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </Reveal>
-
-            {/* Timeline */}
-            <Reveal delay={0.3}>
-              <p className="text-xs text-[#888] uppercase tracking-widest mb-6">Timeline</p>
-              <div className="space-y-6">
-                {[
-                  { year: '2024 – Now', title: 'UI/UX Designer', org: 'GMIndia, Chennai' },
-                  { year: '2023 – 24', title: 'UI/UX Certification', org: 'Aspira Design Institute' },
-                  { year: '2022 – 23', title: 'Electronics Engineer', org: 'Coromandel Electronics' },
-                  { year: '2018 – 22', title: 'B.E. Electronics & Instrumentation', org: 'Anna University (Affiliated)' },
-                ].map((item) => (
-                  <div key={item.year} className="flex gap-6 text-sm">
-                    <span className="text-[#AAA] font-mono text-xs w-20 shrink-0 pt-0.5">{item.year}</span>
-                    <div>
-                      <p className="text-[#111] font-medium">{item.title}</p>
-                      <p className="text-[#888] mt-0.5">{item.org}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
+          {/* Skills */}
+          <Reveal delay={0.2}>
+            <p className="text-[11px] font-bold text-[#AAA] uppercase tracking-[0.2em] mb-4">Skills & Tools</p>
+            <div className="flex flex-wrap gap-2">
+              {SKILLS.map(s => (
+                <span
+                  key={s}
+                  className="text-xs font-semibold text-[#555] border border-[#E8E6E1] px-3.5 py-1.5 rounded-full bg-white hover:border-[#FF4D6D] hover:text-[#FF4D6D] hover:bg-[#FFF5F7] transition-all duration-200 cursor-default"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </Reveal>
 
         </div>
       </div>
