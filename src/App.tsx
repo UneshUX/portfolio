@@ -342,15 +342,24 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
 }
 
 /* ── STAT COUNTER hook ── */
-function useCountUp(target: number, duration = 1600) {
+function useCountUp(target: number, duration = 1400, active = true) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
+
   useEffect(() => {
+    if (!active) {
+      setCount(0);
+      started.current = false;
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) { setCount(target); return; }
+    if (prefersReduced) {
+      setCount(target);
+      return;
+    }
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true;
@@ -364,15 +373,16 @@ function useCountUp(target: number, duration = 1600) {
         requestAnimationFrame(tick);
         obs.disconnect();
       }
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, [target, duration]);
+  }, [target, duration, active]);
+
   return { ref, count };
 }
 
-function StatItem({ value, suffix, label }: { value: number; suffix: string; label: string }) {
-  const { ref, count } = useCountUp(value);
+function StatItem({ value, suffix, label, active = true }: { value: number; suffix: string; label: string; active?: boolean }) {
+  const { ref, count } = useCountUp(value, 1400, active);
   return (
     <div className="flex flex-col items-center gap-1 min-w-0 text-center">
       <span
@@ -387,8 +397,17 @@ function StatItem({ value, suffix, label }: { value: number; suffix: string; lab
   );
 }
 
-function Hero() {
+function Hero({ startCounters = false }: { startCounters?: boolean }) {
   const DOMAINS_MARQUEE = ['Healthcare', 'EdTech', 'Fintech', 'E-commerce', 'SaaS', 'Wearables', 'AI Workflows'];
+
+  const handleScrollToWork = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const el = document.getElementById('work');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      window.history.pushState(null, '', '#work');
+    }
+  };
 
   return (
     <section className="grid-bg pt-16 pb-0 border-b border-[#E8E6E1] dark:border-[#232936] overflow-hidden">
@@ -477,9 +496,9 @@ function Hero() {
         {/* 4. Proof stats strip */}
         <div className="hero-stagger hero-stagger-5 w-full max-w-xl mt-9 sm:mt-10 pt-8 border-t border-[#E8E6E1] dark:border-[#232936]">
           <div className="grid grid-cols-3 gap-6 justify-center">
-            <StatItem value={3} suffix="+" label="yrs UX experience" />
-            <StatItem value={6} suffix="+" label="case studies" />
-            <StatItem value={6} suffix="" label="domains" />
+            <StatItem value={3} suffix="+" label="yrs UX experience" active={startCounters} />
+            <StatItem value={6} suffix="+" label="case studies" active={startCounters} />
+            <StatItem value={6} suffix="" label="domains" active={startCounters} />
           </div>
         </div>
 
@@ -501,11 +520,26 @@ function Hero() {
       </div>
 
       {/* ── SCROLL CUE ── */}
-      <div className="flex flex-col items-center gap-2 pb-8 opacity-60" aria-hidden="true">
-        <span className="text-[10px] text-[#AAA] dark:text-[#64748B] uppercase tracking-widest">Scroll to explore</span>
-        <svg className="hero-bounce w-4 h-4 text-[#CCC] dark:text-[#475569]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+      <div className="flex justify-center pb-8">
+        <a
+          href="#work"
+          onClick={handleScrollToWork}
+          className="group inline-flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#FF4D6D] focus-visible:outline-offset-4 rounded-lg px-4 py-2"
+          aria-label="Scroll to explore featured work"
+        >
+          <span className="text-[10px] text-[#AAA] dark:text-[#64748B] group-hover:text-[#FF4D6D] dark:group-hover:text-[#FF4D6D] uppercase tracking-widest transition-colors font-medium">
+            Scroll to explore
+          </span>
+          <svg
+            className="hero-bounce w-4 h-4 text-[#CCC] dark:text-[#475569] group-hover:text-[#FF4D6D] dark:group-hover:text-[#FF4D6D] transition-colors"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </a>
       </div>
     </section>
   );
@@ -540,7 +574,13 @@ function Work() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
           {PROJECTS.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.08}>
-              <div className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#D5D3CB] dark:hover:border-[#334155] transition-all duration-300 shadow-xs hover:shadow-md">
+              <a
+                href={p.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#FF4D6D]/50 dark:hover:border-[#FF4D6D]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#FF4D6D]"
+                aria-label={`View ${p.title} case study on Behance`}
+              >
                 {/* Cover Image */}
                 <div className="rounded-2xl overflow-hidden border border-[#E8E6E1] dark:border-[#232936] bg-[#F8F7F4] dark:bg-[#1A202C] mb-6 aspect-[16/10] relative">
                   <img
@@ -577,21 +617,16 @@ function Work() {
                     </div>
 
                     <div className="flex items-center justify-end pt-4 border-t border-[#E8E6E1] dark:border-[#232936]">
-                      <a
-                        href={p.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white hover:text-[#FF4D6D] dark:hover:text-[#FF4D6D] transition-colors"
-                      >
+                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#FF4D6D] dark:group-hover:text-[#FF4D6D] transition-colors">
                         View Case Study
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
                         </svg>
-                      </a>
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              </a>
             </Reveal>
           ))}
         </div>
@@ -1113,7 +1148,7 @@ export default function App() {
       >
         <Nav darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <main>
-          <Hero />
+          <Hero startCounters={!loading || fadeOut} />
           <Work />
           <Process />
           <About />
