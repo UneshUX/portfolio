@@ -180,17 +180,24 @@
 
 /* ── Domains marquee ── */
 @keyframes heroMarquee {
-  from {
-    transform: translateX(0);
+  0% {
+    transform: translate3d(0, 0, 0);
   }
 
-  to {
-    transform: translateX(-50%);
+  100% {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 .hero-marquee-track {
-  animation: heroMarquee 22s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: heroMarquee 26s linear infinite;
+}
+
+.hero-marquee-track:hover {
+  animation-play-state: paused;
 }
 
 /* ── Scroll cue bounce ── */

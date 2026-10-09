@@ -347,33 +347,54 @@ function useCountUp(target: number, duration = 1400, active = true) {
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
+  const startAnimation = () => {
+    if (started.current) return;
+    started.current = true;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const pct = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - pct, 3);
+      setCount(Math.round(eased * target));
+      if (pct < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        setCount(target);
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
   useEffect(() => {
     if (!active) {
       setCount(0);
       started.current = false;
       return;
     }
+
     const el = ref.current;
     if (!el) return;
+
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) {
       setCount(target);
       return;
     }
+
+    // If currently visible in viewport, trigger counting animation immediately
+    const rect = el.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (inView && !started.current) {
+      startAnimation();
+      return;
+    }
+
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
-        started.current = true;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const pct = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - pct, 3);
-          setCount(Math.round(eased * target));
-          if (pct < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
+        startAnimation();
         obs.disconnect();
       }
-    }, { threshold: 0.2 });
+    }, { threshold: 0.05 });
+
     obs.observe(el);
     return () => obs.disconnect();
   }, [target, duration, active]);
@@ -508,10 +529,11 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
           <div className="absolute left-0 inset-y-0 w-12 bg-gradient-to-r from-white dark:from-[#0B0D12] to-transparent pointer-events-none z-10" />
           <div className="absolute right-0 inset-y-0 w-12 bg-gradient-to-l from-white dark:from-[#0B0D12] to-transparent pointer-events-none z-10" />
 
-          <div className="hero-marquee-track flex items-center gap-6 w-max" aria-hidden="true">
-            {[...DOMAINS_MARQUEE, ...DOMAINS_MARQUEE, ...DOMAINS_MARQUEE].map((d, i) => (
-              <span key={i} className="text-[11px] text-[#AAA] dark:text-[#64748B] uppercase tracking-widest shrink-0">
-                {d} <span className="text-[#DDD] dark:text-[#334155]">·</span>
+          <div className="hero-marquee-track flex items-center gap-6" aria-hidden="true">
+            {[...DOMAINS_MARQUEE, ...DOMAINS_MARQUEE].map((d, i) => (
+              <span key={i} className="text-[11px] text-[#AAA] dark:text-[#64748B] uppercase tracking-widest shrink-0 flex items-center gap-6 select-none">
+                <span>{d}</span>
+                <span className="text-[#DDD] dark:text-[#334155]">·</span>
               </span>
             ))}
           </div>
@@ -1115,11 +1137,19 @@ export default function App() {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   const toggleDarkMode = () => {
     setDarkMode(prev => !prev);
   };
 
   const handleDone = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     setFadeOut(true);
     setTimeout(() => setLoading(false), 500);
   };
