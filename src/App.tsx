@@ -17,7 +17,6 @@ const PROJECTS = [
     tags: ['Healthcare', 'Mobile App'],
     desc: 'A healthcare experience that brings doctor appointments, lab tests, diagnostics, and medicine access into one simple, connected platform.',
     year: '2025',
-    accent: '#FF4D6D',
     cover: drLabCover,
     link: 'https://www.behance.net/gallery/188507041/DrLab-UIUX-Case-Study-Medical-Appointments-App?platform=direct',
   },
@@ -28,7 +27,6 @@ const PROJECTS = [
     tags: ['SaaS', 'Cloud Storage'],
     desc: 'Reimagining everyday file management with a clean, organized cloud experience built around effortless storage and sharing.',
     year: '2025',
-    accent: '#4F6EF7',
     cover: skyvaultCover,
     link: 'https://www.behance.net/gallery/186306577/Sky-Vault-Cloud-Storage-Dashboard-Web-Application?platform=direct',
   },
@@ -39,7 +37,6 @@ const PROJECTS = [
     tags: ['Concept', 'Productivity'],
     desc: 'A UX concept that brings email threads directly into WhatsApp\'s familiar chat UI — built for India\'s millions of micro-entrepreneurs.',
     year: '2024',
-    accent: '#25A244',
     cover: whatsappEmailCover,
     link: 'https://www.behance.net/gallery/191065245/WhatsApp-with-Email-Functionality-Adding-Feature',
   },
@@ -50,7 +47,6 @@ const PROJECTS = [
     tags: ['Wearable', 'Smart Transit'],
     desc: 'A smartwatch-based bus ticketing experience designed to make Chennai\'s city transit faster, simpler, and completely hands-free.',
     year: '2024',
-    accent: '#F59E0B',
     cover: busSnapCover,
     link: 'https://www.behance.net/gallery/189370901/Bus-Snap-Bus-Ticket-Booking-App-Watch-App?platform=direct',
   },
@@ -346,27 +342,10 @@ function useCountUp(target: number, duration = 1400, active = true) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
-
-  const startAnimation = () => {
-    if (started.current) return;
-    started.current = true;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const pct = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - pct, 3);
-      setCount(Math.round(eased * target));
-      if (pct < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        setCount(target);
-      }
-    };
-    requestAnimationFrame(tick);
-  };
+  const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
-    if (!active) {
-      setCount(0);
+    if (!active || prefersReduced) {
       started.current = false;
       return;
     }
@@ -374,11 +353,22 @@ function useCountUp(target: number, duration = 1400, active = true) {
     const el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      setCount(target);
-      return;
-    }
+    const startAnimation = () => {
+      if (started.current) return;
+      started.current = true;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const pct = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - pct, 3);
+        setCount(Math.round(eased * target));
+        if (pct < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          setCount(target);
+        }
+      };
+      requestAnimationFrame(tick);
+    };
 
     // If currently visible in viewport, trigger counting animation immediately
     const rect = el.getBoundingClientRect();
@@ -397,9 +387,9 @@ function useCountUp(target: number, duration = 1400, active = true) {
 
     obs.observe(el);
     return () => obs.disconnect();
-  }, [target, duration, active]);
+  }, [target, duration, active, prefersReduced]);
 
-  return { ref, count };
+  return { ref, count: !active ? 0 : prefersReduced ? target : count };
 }
 
 function StatItem({ value, suffix, label, active = true }: { value: number; suffix: string; label: string; active?: boolean }) {
