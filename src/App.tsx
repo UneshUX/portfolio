@@ -5,11 +5,24 @@ import drLabCover from './assets/Cover Image/Dr Lab Cover.png';
 import skyvaultCover from './assets/Cover Image/Skyvault Cover.png';
 import whatsappEmailCover from './assets/Cover Image/Whatsapp + Email cover.png';
 import busSnapCover from './assets/Cover Image/Bus Snap Cover.png';
+import nadhiSilksCover from './assets/Cover Image/Nadhi Silks Cover.jpg';
+import abarSignaturesCover from './assets/Cover Image/ABAR Signatures Cover.jpg';
 import './index.css';
 
 /* ─── DATA ─────────────────────────────────────────── */
 
-const PROJECTS = [
+interface Project {
+  id: string;
+  index: string;
+  title: string;
+  tags: string[];
+  desc: string;
+  year: string;
+  cover: string;
+  link: string;
+}
+
+const PROJECTS: Project[] = [
   {
     id: 'dr-lab',
     index: '01',
@@ -49,6 +62,29 @@ const PROJECTS = [
     year: '2024',
     cover: busSnapCover,
     link: 'https://www.behance.net/gallery/189370901/Bus-Snap-Bus-Ticket-Booking-App-Watch-App?platform=direct',
+  },
+];
+
+const BRAND_PROJECTS: Project[] = [
+  {
+    id: 'nadhi-silks',
+    index: '05',
+    title: 'Nadhi Silks',
+    tags: ['Logo Design', 'Brand Identity'],
+    desc: 'A refined logo and brand identity for a silk label, balancing traditional elegance with a premium contemporary presence.',
+    year: '2025',
+    cover: nadhiSilksCover,
+    link: 'https://www.behance.net/gallery/239206583/Nadhi-Silks-Logo-Brand-Identity-Design?platform=direct',
+  },
+  {
+    id: 'abar-signatures',
+    index: '06',
+    title: 'ABAR Signatures',
+    tags: ['Logo Design', 'Brand Identity'],
+    desc: 'A bold, signature-inspired identity designed to give the brand a distinctive and confident visual presence.',
+    year: '2025',
+    cover: abarSignaturesCover,
+    link: 'https://www.behance.net/gallery/232317741/ABAR-Signatures-Brand-Logo-Design?platform=direct',
   },
 ];
 
@@ -158,7 +194,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
 
   // Track active section via IntersectionObserver + bottom-of-page check
   useEffect(() => {
-    const sectionIds = ['work', 'process', 'about', 'contact'];
+    const sectionIds = ['work', 'brand-work', 'process', 'about', 'contact'];
     const observers: IntersectionObserver[] = [];
 
     sectionIds.forEach(id => {
@@ -166,7 +202,13 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
       if (!el) return;
       const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
+          if (entry.isIntersecting) {
+            if (id === 'brand-work') {
+              setActiveSection('work');
+            } else {
+              setActiveSection(id);
+            }
+          }
         },
         { threshold: 0.15, rootMargin: '-10% 0px -40% 0px' }
       );
@@ -508,7 +550,7 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
         <div className="hero-stagger hero-stagger-5 w-full max-w-xl mt-9 sm:mt-10 pt-8 border-t border-[#E8E6E1] dark:border-[#232936]">
           <div className="grid grid-cols-3 gap-6 justify-center">
             <StatItem value={3} suffix="+" label="yrs UX experience" active={startCounters} />
-            <StatItem value={6} suffix="+" label="case studies" active={startCounters} />
+            <StatItem value={6} suffix="+" label="projects" active={startCounters} />
             <StatItem value={6} suffix="" label="domains" active={startCounters} />
           </div>
         </div>
@@ -554,6 +596,66 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
         </a>
       </div>
     </section>
+  );
+}
+
+function ProjectCard({ project, delay = 0 }: { project: Project; delay?: number }) {
+  return (
+    <Reveal delay={delay}>
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#FF4D6D]/50 dark:hover:border-[#FF4D6D]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#FF4D6D]"
+        aria-label={'View ' + project.title + ' project on Behance'}
+      >
+        <div className="rounded-2xl overflow-hidden border border-[#E8E6E1] dark:border-[#232936] bg-[#F8F7F4] dark:bg-[#1A202C] mb-6 aspect-[16/10] relative">
+          <img
+            src={project.cover}
+            alt={project.title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+          />
+          <div className="absolute top-4 left-4 bg-white/95 dark:bg-[#0B0D12]/90 border border-black/5 dark:border-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-mono font-medium text-[#111] dark:text-white shadow-xs">
+            {project.index}
+          </div>
+          <div className="absolute top-4 right-4 bg-white/95 dark:bg-[#0B0D12]/90 border border-black/5 dark:border-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-[#555] dark:text-[#CBD5E1] shadow-xs">
+            {project.year}
+          </div>
+        </div>
+
+        <div className="flex flex-col flex-1 justify-between">
+          <div>
+            <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] dark:text-white group-hover:text-[#FF4D6D] dark:group-hover:text-[#FF4D6D] transition-colors leading-tight mb-3">
+              {project.title}
+            </h3>
+            <p className="text-sm text-[#555] dark:text-[#94A3B8] leading-relaxed mb-6">
+              {project.desc}
+            </p>
+          </div>
+
+          <div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {project.tags.map(tag => (
+                <span key={tag} className="text-xs text-[#666] dark:text-[#94A3B8] bg-[#F0EEE8] dark:bg-[#1E2533] border border-transparent dark:border-[#2D3748] px-3 py-1 rounded-full font-medium">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-end pt-4 border-t border-[#E8E6E1] dark:border-[#232936]">
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#FF4D6D] dark:group-hover:text-[#FF4D6D] transition-colors">
+                View Project
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </Reveal>
   );
 }
 
@@ -643,7 +745,43 @@ function Work() {
           ))}
         </div>
 
-        {/* Behance Footer CTA */}
+      </div>
+    </section>
+  );
+}
+
+function BrandWork() {
+  return (
+    <section id="brand-work" className="border-t border-[#E8E6E1] dark:border-[#232936] py-20 sm:py-24 scroll-mt-16">
+      <div className="max-w-6xl mx-auto px-6">
+        <Reveal className="mb-14 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <span className="text-[11px] font-bold text-[#ea4764] uppercase tracking-[0.2em] mb-3 block">
+              Brand Identity
+            </span>
+            <h2
+              className="leading-tight tracking-tight text-[#111] dark:text-white"
+              style={{
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 800,
+                fontStyle: 'italic',
+                fontSize: 'clamp(28px, 4vw, 40px)',
+              }}
+            >
+              Brand Design Works
+            </h2>
+          </div>
+          <p className="text-sm text-[#777] dark:text-[#94A3B8] max-w-sm">
+            Selected logo and identity projects created to give each brand a distinct, memorable visual presence.
+          </p>
+        </Reveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
+          {BRAND_PROJECTS.map((project, index) => (
+            <ProjectCard key={project.id} project={project} delay={index * 0.08} />
+          ))}
+        </div>
+
         <Reveal className="mt-16 text-center">
           <a
             href="https://www.behance.net/unesh"
@@ -1170,6 +1308,7 @@ export default function App() {
         <main>
           <Hero startCounters={!loading || fadeOut} />
           <Work />
+          <BrandWork />
           <Process />
           <About />
           <Contact />
