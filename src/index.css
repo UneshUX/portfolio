@@ -5,7 +5,7 @@
 @theme {
   --font-serif: 'Sora', system-ui, sans-serif;
   --font-sans: 'Poppins', system-ui, -apple-system, sans-serif;
-  --color-accent: #E8405F;
+  --color-accent: #E72D4E;
   --color-bg: #FFFFFF;
   --color-surface: #F8F7F4;
   --color-border: #E8E6E1;
@@ -34,7 +34,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #E8405F;
+    outline: 2px solid #E72D4E;
     outline-offset: 2px;
   }
 }

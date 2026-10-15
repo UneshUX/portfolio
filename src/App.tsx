@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Mail, Copy, Check, ArrowUpRight, Sun, Moon } from 'lucide-react';
 import profileImg from './assets/Profile image.png';
 import drLabCover from './assets/Cover Image/Dr Lab Cover.png';
@@ -102,150 +102,6 @@ const PROCESS = [
   { step: '05', title: 'Improve', desc: 'Test, refine, and improve the experience based on feedback.' },
 ];
 
-/* ─── CUSTOM CURSOR ─────────────────────────────────── */
-
-function CustomCursor({ darkMode }: { darkMode: boolean }) {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const exploreRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: -200, y: -200 });
-  const currentPos = useRef({ x: -200, y: -200 });
-  const rafId = useRef<number>(0);
-  const [isHoveringCard, setIsHoveringCard] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
-
-  // Detect touch device — remove trailing dot on touch screens
-  useEffect(() => {
-    const onTouch = () => setIsTouch(true);
-    window.addEventListener('touchstart', onTouch, { once: true });
-    return () => window.removeEventListener('touchstart', onTouch);
-  }, []);
-
-  // Lerp at 0.08 — slower than mouse = premium trailing lag effect
-  const animate = useCallback(function animateFrame() {
-    const ease = 0.08;
-    currentPos.current.x += (mousePos.current.x - currentPos.current.x) * ease;
-    currentPos.current.y += (mousePos.current.y - currentPos.current.y) * ease;
-    const x = Math.round(currentPos.current.x * 100) / 100;
-    const y = Math.round(currentPos.current.y * 100) / 100;
-    if (cursorRef.current) cursorRef.current.style.transform = `translate(${x}px, ${y}px)`;
-    if (exploreRef.current) exploreRef.current.style.transform = `translate(${x}px, ${y}px)`;
-    rafId.current = requestAnimationFrame(animateFrame);
-  }, []);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => { mousePos.current = { x: e.clientX, y: e.clientY }; };
-    window.addEventListener('mousemove', onMove);
-    rafId.current = requestAnimationFrame(animate);
-    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(rafId.current); };
-  }, [animate]);
-
-  // Listen for card hover events
-  useEffect(() => {
-    const onEnter = () => setIsHoveringCard(true);
-    const onLeave = () => setIsHoveringCard(false);
-    window.addEventListener('card-cursor-enter', onEnter);
-    window.addEventListener('card-cursor-leave', onLeave);
-    return () => {
-      window.removeEventListener('card-cursor-enter', onEnter);
-      window.removeEventListener('card-cursor-leave', onLeave);
-    };
-  }, []);
-
-  if (isTouch) return null;
-
-  const DOT = 18;       // Slightly larger for visibility
-  const EXPLORE = 120;  // Glass overlay diameter on card hover
-  // Glass tint: theme-adaptive translucent backgrounds
-  const glassBg = darkMode ? 'rgba(255,255,255,0.92)' : 'rgba(17,17,17,0.92)';
-  const glassBorder = darkMode ? '1px solid rgba(255,255,255,0.95)' : '1px solid rgba(17,17,17,0.95)';
-  const exploreTextColor = darkMode ? 'rgba(17,17,17,0.95)' : 'rgba(255,255,255,0.95)';
-
-  return (
-    <>
-      {/*
-        * Trailing dot — always white background.
-        * mix-blend-mode: difference inverts luminance of whatever is behind:
-        *   dark bg → dot reads as bright white;
-        *   light bg → dot reads as near-black.
-        * This makes it theme-adaptive with zero extra code.
-        * Disabled during Explore state to avoid double-inversion on the glass layer.
-        */}
-      <div
-        ref={cursorRef}
-        aria-hidden="true"
-        style={{
-          position: 'fixed', top: 0, left: 0,
-          width: DOT, height: DOT, borderRadius: '50%',
-          pointerEvents: 'none', zIndex: 9999,
-          marginLeft: -(DOT / 2), marginTop: -(DOT / 2),
-          backgroundColor: '#ffffff',
-          mixBlendMode: isHoveringCard ? 'normal' : 'difference',
-          opacity: isHoveringCard ? 0 : 1,
-          transition: 'opacity 0.3s cubic-bezier(0.23,1,0.32,1)',
-          willChange: 'transform',
-        }}
-      />
-
-      {/*
-        * Frosted-glass Explore overlay.
-        * backdrop-filter: blur() affects only what is BEHIND the element,
-        * so the "Explore" text inside stays perfectly crisp and unblurred.
-        */}
-      <div
-        ref={exploreRef}
-        aria-hidden="true"
-        style={{
-          position: 'fixed', top: 0, left: 0,
-          width: isHoveringCard ? EXPLORE : DOT,
-          height: isHoveringCard ? EXPLORE : DOT,
-          borderRadius: '50%', pointerEvents: 'none', zIndex: 9998,
-          marginLeft: isHoveringCard ? -(EXPLORE / 2) : -(DOT / 2),
-          marginTop: isHoveringCard ? -(EXPLORE / 2) : -(DOT / 2),
-          backdropFilter: isHoveringCard ? 'blur(4px) saturate(130%)' : 'blur(0px)',
-          WebkitBackdropFilter: isHoveringCard ? 'blur(4px) saturate(130%)' : 'blur(0px)',
-          backgroundColor: isHoveringCard ? glassBg : 'transparent',
-          border: isHoveringCard ? glassBorder : '1px solid transparent',
-          boxShadow: isHoveringCard
-            ? '0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15)'
-            : 'none',
-          opacity: isHoveringCard ? 1 : 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: [
-            'width 0.5s cubic-bezier(0.23,1,0.32,1)',
-            'height 0.5s cubic-bezier(0.23,1,0.32,1)',
-            'margin 0.5s cubic-bezier(0.23,1,0.32,1)',
-            'opacity 0.35s ease',
-            'background-color 0.35s ease',
-            'border-color 0.35s ease',
-            'box-shadow 0.35s ease',
-            'backdrop-filter 0.4s ease',
-          ].join(', '),
-          willChange: 'transform',
-        }}
-      >
-        <span
-          style={{
-            color: exploreTextColor,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase' as const,
-            opacity: isHoveringCard ? 1 : 0,
-            transition: 'opacity 0.2s ease 0.18s',
-            fontFamily: "'Sora', sans-serif",
-            userSelect: 'none' as const,
-            // Text inside the element is NOT affected by backdrop-filter — stays razor sharp
-            filter: 'none',
-            WebkitFontSmoothing: 'antialiased',
-          }}
-        >
-          Explore
-        </span>
-      </div>
-    </>
-  );
-}
-
 /* ─── HELPERS ────────────────────────────────────────── */
 
 function useScrollReveal() {
@@ -287,7 +143,7 @@ function ThemeToggle({ darkMode, toggleDarkMode, className = '' }: { darkMode: b
     <button
       type="button"
       onClick={toggleDarkMode}
-      className={`relative inline-flex items-center h-8 w-14 rounded-full p-1 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-[#E8405F] cursor-pointer shrink-0 ${darkMode ? 'bg-[#181E29] border border-[#2B3548]' : 'bg-[#EFECE6] border border-[#DDD9D0]'
+      className={`relative inline-flex items-center h-8 w-14 rounded-full p-1 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-[#E72D4E] cursor-pointer shrink-0 ${darkMode ? 'bg-[#181E29] border border-[#2B3548]' : 'bg-[#EFECE6] border border-[#DDD9D0]'
         } ${className}`}
       role="switch"
       aria-checked={darkMode}
@@ -401,7 +257,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Wordmark */}
         <a href="#" className="flex items-center gap-2.5 group" aria-label="Unesh G — portfolio home">
-          <span className="font-bold text-[#111] dark:text-white text-lg tracking-tight group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors">
+          <span className="font-bold text-[#111] dark:text-white text-lg tracking-tight group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors">
             Unesh G
           </span>
         </a>
@@ -414,7 +270,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
               href={l.href}
               onClick={(e) => handleNavClick(e, l.href)}
               className={`text-sm transition-colors relative py-1 cursor-pointer ${activeSection === l.id
-                ? 'text-[#111] dark:text-white font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#E8405F] after:rounded-full'
+                ? 'text-[#111] dark:text-white font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#E72D4E] after:rounded-full'
                 : 'text-[#555] dark:text-[#94A3B8] hover:text-[#111] dark:hover:text-white'
                 }`}
               aria-current={activeSection === l.id ? 'page' : undefined}
@@ -432,7 +288,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
             href="https://drive.google.com/file/d/1kFJrM5EJ_nmuRAf41shE9_LqPh1v95kg/view?usp=drive_link"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E8405F] dark:hover:bg-[#E8405F] dark:hover:text-white focus-visible:outline-2 focus-visible:outline-[#E8405F] focus-visible:outline-offset-2 transition-all duration-200 cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E72D4E] dark:hover:bg-[#E72D4E] dark:hover:text-white focus-visible:outline-2 focus-visible:outline-[#E72D4E] focus-visible:outline-offset-2 transition-all duration-200 cursor-pointer shadow-xs"
           >
             <span>Resume</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -445,7 +301,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 text-[#111] dark:text-white rounded-lg hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#E8405F]"
+            className="p-2 text-[#111] dark:text-white rounded-lg hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#E72D4E]"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
           >
@@ -494,7 +350,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
                 handleNavClick(e, l.href);
               }}
               className={`text-base font-medium transition-all duration-300 transform ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
-                } ${activeSection === l.id ? 'text-[#E8405F] font-semibold' : 'text-[#111] dark:text-gray-200 hover:text-[#E8405F] dark:hover:text-[#E8405F]'}`}
+                } ${activeSection === l.id ? 'text-[#E72D4E] font-semibold' : 'text-[#111] dark:text-gray-200 hover:text-[#E72D4E] dark:hover:text-[#E72D4E]'}`}
               style={{ transitionDelay: menuOpen ? `${i * 35 + 40}ms` : '0ms' }}
             >
               {l.label}
@@ -510,7 +366,7 @@ function Nav({ darkMode, toggleDarkMode }: NavProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-center gap-1.5 w-full text-center text-sm font-semibold px-5 py-2.5 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E8405F] dark:hover:bg-[#E8405F] dark:hover:text-white transition-colors shadow-sm"
+              className="flex items-center justify-center gap-1.5 w-full text-center text-sm font-semibold px-5 py-2.5 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E72D4E] dark:hover:bg-[#E72D4E] dark:hover:text-white transition-colors shadow-sm"
             >
               <span>Resume</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -672,7 +528,7 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
               document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
               window.history.pushState(null, '', '#work');
             }}
-            className="inline-flex items-center justify-center h-11 px-7 text-sm font-semibold rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E8405F] dark:hover:bg-[#E8405F] dark:hover:text-white focus-visible:outline-2 focus-visible:outline-[#E8405F] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] dark:shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_0_rgba(255,77,109,0.4)] cursor-pointer"
+            className="inline-flex items-center justify-center h-11 px-7 text-sm font-semibold rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E72D4E] dark:hover:bg-[#E72D4E] dark:hover:text-white focus-visible:outline-2 focus-visible:outline-[#E72D4E] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] dark:shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_0_rgba(255,77,109,0.4)] cursor-pointer"
           >
             View My Work
           </a>
@@ -683,7 +539,7 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
               window.history.pushState(null, '', '#contact');
             }}
-            className="inline-flex items-center justify-center h-11 px-7 text-sm font-semibold rounded-full border border-[#E8E6E1] dark:border-[#2D3748] bg-white dark:bg-[#141A24] text-[#111] dark:text-white hover:border-[#111] dark:hover:border-[#E8405F] hover:text-[#111] dark:hover:text-[#E8405F] focus-visible:outline-2 focus-visible:outline-[#E8405F] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_2px_8px_0_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] cursor-pointer"
+            className="inline-flex items-center justify-center h-11 px-7 text-sm font-semibold rounded-full border border-[#E8E6E1] dark:border-[#2D3748] bg-white dark:bg-[#141A24] text-[#111] dark:text-white hover:border-[#111] dark:hover:border-[#E72D4E] hover:text-[#111] dark:hover:text-[#E72D4E] focus-visible:outline-2 focus-visible:outline-[#E72D4E] focus-visible:outline-offset-2 transition-all duration-200 shadow-[0_2px_8px_0_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] cursor-pointer"
           >
             Let's Talk
           </a>
@@ -721,14 +577,14 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
         <a
           href="#work"
           onClick={handleScrollToWork}
-          className="group inline-flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#E8405F] focus-visible:outline-offset-4 rounded-lg px-4 py-2"
+          className="group inline-flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#E72D4E] focus-visible:outline-offset-4 rounded-lg px-4 py-2"
           aria-label="Scroll to explore featured work"
         >
-          <span className="text-[10px] text-[#AAA] dark:text-[#64748B] group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] uppercase tracking-widest transition-colors font-medium">
+          <span className="text-[10px] text-[#AAA] dark:text-[#64748B] group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] uppercase tracking-widest transition-colors font-medium">
             Scroll to explore
           </span>
           <svg
-            className="hero-bounce w-4 h-4 text-[#CCC] dark:text-[#475569] group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors"
+            className="hero-bounce w-4 h-4 text-[#CCC] dark:text-[#475569] group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -743,18 +599,13 @@ function Hero({ startCounters = false }: { startCounters?: boolean }) {
 }
 
 function ProjectCard({ project, delay = 0 }: { project: Project; delay?: number }) {
-  const handleEnter = () => window.dispatchEvent(new Event('card-cursor-enter'));
-  const handleLeave = () => window.dispatchEvent(new Event('card-cursor-leave'));
-
   return (
     <Reveal delay={delay}>
       <a
         href={project.link}
         target="_blank"
         rel="noopener noreferrer"
-        onMouseEnter={handleEnter}
-        onMouseLeave={handleLeave}
-        className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#E8405F]/50 dark:hover:border-[#E8405F]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#E8405F]"
+        className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#E72D4E]/50 dark:hover:border-[#E72D4E]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#E72D4E]"
         aria-label={'View ' + project.title + ' project on Behance'}
       >
         <div className="rounded-2xl overflow-hidden border border-[#E8E6E1] dark:border-[#232936] bg-[#F8F7F4] dark:bg-[#1A202C] mb-6 aspect-[16/10] relative">
@@ -775,7 +626,7 @@ function ProjectCard({ project, delay = 0 }: { project: Project; delay?: number 
 
         <div className="flex flex-col flex-1 justify-between">
           <div>
-            <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors leading-tight mb-3">
+            <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors leading-tight mb-3">
               {project.title}
             </h3>
             <p className="text-sm text-[#555] dark:text-[#94A3B8] leading-relaxed mb-6">
@@ -793,7 +644,7 @@ function ProjectCard({ project, delay = 0 }: { project: Project; delay?: number 
             </div>
 
             <div className="flex items-center justify-end pt-4 border-t border-[#E8E6E1] dark:border-[#232936]">
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors">
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors">
                 View Project
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
@@ -840,9 +691,7 @@ function Work() {
                 href={p.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                onMouseEnter={() => window.dispatchEvent(new Event('card-cursor-enter'))}
-                onMouseLeave={() => window.dispatchEvent(new Event('card-cursor-leave'))}
-                className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#E8405F]/50 dark:hover:border-[#E8405F]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#E8405F]"
+                className="group flex flex-col h-full border border-[#E8E6E1] dark:border-[#232936] bg-[#FAF9F5] dark:bg-[#131720] rounded-3xl p-6 sm:p-7 hover:border-[#E72D4E]/50 dark:hover:border-[#E72D4E]/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xs hover:shadow-xl cursor-pointer block text-inherit no-underline focus-visible:outline-2 focus-visible:outline-[#E72D4E]"
                 aria-label={`View ${p.title} case study on Behance`}
               >
                 {/* Cover Image */}
@@ -863,7 +712,7 @@ function Work() {
                 {/* Content */}
                 <div className="flex flex-col flex-1 justify-between">
                   <div>
-                    <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors leading-tight mb-3">
+                    <h3 className="font-serif italic text-2xl sm:text-3xl text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors leading-tight mb-3">
                       {p.title}
                     </h3>
                     <p className="text-sm text-[#555] dark:text-[#94A3B8] leading-relaxed mb-6">
@@ -881,7 +730,7 @@ function Work() {
                     </div>
 
                     <div className="flex items-center justify-end pt-4 border-t border-[#E8E6E1] dark:border-[#232936]">
-                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors">
+                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors">
                         View Case Study
                         <svg className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M7 7h10v10" />
@@ -972,7 +821,7 @@ function Process() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-6">
           {PROCESS.map((p, i) => (
             <Reveal key={p.step} delay={i * 0.08} className="border-t border-[#E8E6E1] dark:border-[#232936] pt-6 flex flex-col justify-start">
-              <span className="text-xs font-mono text-[#E8405F] font-semibold tracking-wider block mb-3">
+              <span className="text-xs font-mono text-[#E72D4E] font-semibold tracking-wider block mb-3">
                 {p.step}
               </span>
               <h3 className="font-serif italic text-xl text-[#111] dark:text-white mb-2 leading-snug">
@@ -1021,7 +870,7 @@ function About() {
                 fontSize: 'clamp(28px, 4vw, 40px)',
               }}
             >
-              Engineer-turned-designer.
+              Engineer-turned-designer
             </h2>
           </div>
         </Reveal>
@@ -1097,7 +946,7 @@ function About() {
                     <div className="relative">
                       {/* Dot */}
                       <div
-                        className="absolute -left-7 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-[#0B0D12] shadow-sm bg-[#111] dark:bg-[#E8405F]"
+                        className="absolute -left-7 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-[#0B0D12] shadow-sm bg-[#111] dark:bg-[#E72D4E]"
                       />
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5">
                         <div>
@@ -1124,7 +973,7 @@ function About() {
               {SKILLS.map(s => (
                 <span
                   key={s}
-                  className="text-xs font-semibold text-[#555] dark:text-[#CBD5E1] border border-[#E8E6E1] dark:border-[#232936] px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131720] hover:border-[#E8405F] dark:hover:border-[#E8405F] hover:text-[#E8405F] dark:hover:text-[#E8405F] hover:bg-[#FFF5F7] dark:hover:bg-[#E8405F]/10 transition-all duration-200 cursor-default"
+                  className="text-xs font-semibold text-[#555] dark:text-[#CBD5E1] border border-[#E8E6E1] dark:border-[#232936] px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131720] hover:border-[#E72D4E] dark:hover:border-[#E72D4E] hover:text-[#E72D4E] dark:hover:text-[#E72D4E] hover:bg-[#FFF5F7] dark:hover:bg-[#E72D4E]/10 transition-all duration-200 cursor-default"
                 >
                   {s}
                 </span>
@@ -1155,7 +1004,7 @@ function Contact() {
     <section id="contact" className="scroll-mt-16 border-t border-[#E8E6E1] dark:border-[#232936] bg-[#F8F7F4] dark:bg-[#0F131A] py-24 sm:py-28 relative overflow-hidden">
       {/* Soft gradient accent in the background */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[360px] bg-gradient-to-tr from-[#E8405F]/8 via-[#4F6EF7]/5 to-transparent dark:from-[#E8405F]/15 dark:via-[#4F6EF7]/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[360px] bg-gradient-to-tr from-[#E72D4E]/8 via-[#4F6EF7]/5 to-transparent dark:from-[#E72D4E]/15 dark:via-[#4F6EF7]/10 rounded-full blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -1192,7 +1041,7 @@ function Contact() {
         <Reveal delay={0.1} className="mb-6">
           <div className="bg-white dark:bg-[#131720] border border-[#E8E6E1] dark:border-[#232936] rounded-3xl p-7 sm:p-9 shadow-xs hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-14 h-14 rounded-2xl bg-[#FAF9F5] dark:bg-[#1A202C] border border-[#E8E6E1] dark:border-[#2D3748] flex items-center justify-center shrink-0 text-[#E8405F]">
+              <div className="w-14 h-14 rounded-2xl bg-[#FAF9F5] dark:bg-[#1A202C] border border-[#E8E6E1] dark:border-[#2D3748] flex items-center justify-center shrink-0 text-[#E72D4E]">
                 <Mail className="w-6 h-6" />
               </div>
               <div className="min-w-0">
@@ -1201,7 +1050,7 @@ function Contact() {
                 </span>
                 <a
                   href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20%26%20Product%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
-                  className="font-mono text-base sm:text-xl font-medium text-[#111] dark:text-white hover:text-[#E8405F] dark:hover:text-[#E8405F] transition-colors truncate block"
+                  className="font-mono text-base sm:text-xl font-medium text-[#111] dark:text-white hover:text-[#E72D4E] dark:hover:text-[#E72D4E] transition-colors truncate block"
                 >
                   unesh0606@gmail.com
                 </a>
@@ -1230,7 +1079,7 @@ function Contact() {
 
               <a
                 href="mailto:unesh0606@gmail.com?subject=UI%2FUX%20%26%20Product%20Design%20Inquiry%20%E2%80%94%20Unesh%20G"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E8405F] dark:hover:bg-[#E8405F] dark:hover:text-white transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium px-6 py-2.5 rounded-full bg-[#111] dark:bg-white text-white dark:text-[#111] hover:bg-[#E72D4E] dark:hover:bg-[#E72D4E] dark:hover:text-white transition-colors shadow-xs"
               >
                 <span>Compose Email</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -1245,40 +1094,40 @@ function Contact() {
             href="https://linkedin.com/in/unesh-g"
             target="_blank"
             rel="noopener noreferrer"
-            className="group p-6 bg-white dark:bg-[#131720] border border-[#E8E6E1] dark:border-[#232936] rounded-2xl hover:border-[#E8405F] dark:hover:border-[#E8405F] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
+            className="group p-6 bg-white dark:bg-[#131720] border border-[#E8E6E1] dark:border-[#232936] rounded-2xl hover:border-[#E72D4E] dark:hover:border-[#E72D4E] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
           >
             <div className="flex items-center gap-4">
               <div className="w-11 h-11 rounded-xl bg-[#FAF9F5] dark:bg-[#1A202C] border border-[#E8E6E1] dark:border-[#2D3748] flex items-center justify-center font-bold text-sm text-[#0A66C2] group-hover:bg-[#0A66C2] group-hover:text-white group-hover:border-[#0A66C2] transition-colors">
                 in
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors flex items-center gap-1.5">
                   LinkedIn
                 </h4>
                 <p className="text-xs text-[#777] dark:text-[#64748B]">linkedin.com/in/unesh-g</p>
               </div>
             </div>
-            <ArrowUpRight className="w-4 h-4 text-[#AAA] dark:text-[#64748B] group-hover:text-[#E8405F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            <ArrowUpRight className="w-4 h-4 text-[#AAA] dark:text-[#64748B] group-hover:text-[#E72D4E] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
           </a>
 
           <a
             href="https://www.behance.net/unesh"
             target="_blank"
             rel="noopener noreferrer"
-            className="group p-6 bg-white dark:bg-[#131720] border border-[#E8E6E1] dark:border-[#232936] rounded-2xl hover:border-[#E8405F] dark:hover:border-[#E8405F] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
+            className="group p-6 bg-white dark:bg-[#131720] border border-[#E8E6E1] dark:border-[#232936] rounded-2xl hover:border-[#E72D4E] dark:hover:border-[#E72D4E] transition-all duration-200 flex items-center justify-between shadow-2xs hover:shadow-xs"
           >
             <div className="flex items-center gap-4">
               <div className="w-11 h-11 rounded-xl bg-[#FAF9F5] dark:bg-[#1A202C] border border-[#E8E6E1] dark:border-[#2D3748] flex items-center justify-center font-bold text-sm text-[#0057FF] group-hover:bg-[#0057FF] group-hover:text-white group-hover:border-[#0057FF] transition-colors">
                 Be
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E8405F] dark:group-hover:text-[#E8405F] transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-semibold text-[#111] dark:text-white group-hover:text-[#E72D4E] dark:group-hover:text-[#E72D4E] transition-colors flex items-center gap-1.5">
                   Behance
                 </h4>
                 <p className="text-xs text-[#777] dark:text-[#64748B]">behance.net/unesh</p>
               </div>
             </div>
-            <ArrowUpRight className="w-4 h-4 text-[#AAA] dark:text-[#64748B] group-hover:text-[#E8405F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            <ArrowUpRight className="w-4 h-4 text-[#AAA] dark:text-[#64748B] group-hover:text-[#E72D4E] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
           </a>
         </Reveal>
 
@@ -1468,7 +1317,7 @@ function Loader({ onDone }: { onDone: () => void }) {
         style={{ animation: 'loaderFadeUp 0.4s ease both', animationDelay: '0.9s' }}
       >
         <div
-          className="h-full bg-[#111] dark:bg-[#E8405F] rounded-full"
+          className="h-full bg-[#111] dark:bg-[#E72D4E] rounded-full"
           style={{ animation: 'loaderBar 1.6s cubic-bezier(0.4,0,0.2,1) 1s both' }}
         />
       </div>
@@ -1542,9 +1391,6 @@ export default function App() {
 
   return (
     <div className="bg-white dark:bg-[#0B0D12] text-[#111] dark:text-[#F1F5F9] min-h-screen transition-colors duration-300">
-      {/* Global custom cursor */}
-      <CustomCursor darkMode={darkMode} />
-
       {/* Loader */}
       {loading && (
         <div
