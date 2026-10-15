@@ -5,7 +5,7 @@
 @theme {
   --font-serif: 'Sora', system-ui, sans-serif;
   --font-sans: 'Poppins', system-ui, -apple-system, sans-serif;
-  --color-accent: #FF4D6D;
+  --color-accent: #E8405F;
   --color-bg: #FFFFFF;
   --color-surface: #F8F7F4;
   --color-border: #E8E6E1;
@@ -33,16 +33,8 @@
     font-style: italic;
   }
 
-  /* Reusable gradient-text utility */
-  .gradient-text {
-    background: linear-gradient(120deg, #FF4D6D 0%, #ff8fa3 50%, #e8335a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
   :focus-visible {
-    outline: 2px solid #FF4D6D;
+    outline: 2px solid #E8405F;
     outline-offset: 2px;
   }
 }
@@ -169,6 +161,20 @@
   animation: heroBounce 1.8s ease-in-out infinite;
 }
 
+/* ── "Let's work together" footer marquee ── */
+@keyframes marquee-banner {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.marquee-banner-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-banner 30s linear infinite;
+}
+
+
 /* ── prefers-reduced-motion: disable all hero animations ── */
 @media (prefers-reduced-motion: reduce) {
   .hero-stagger {
@@ -181,6 +187,10 @@
   }
 
   .hero-bounce {
+    animation: none;
+  }
+
+  .marquee-banner-track {
     animation: none;
   }
 }
